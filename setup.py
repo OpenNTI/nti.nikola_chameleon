@@ -12,8 +12,9 @@ TESTS_REQUIRE = [
 ]
 
 
-def _read(fname):
-    with codecs.open(fname, encoding='utf-8') as f:
+def _read(*fname):
+    import os.path
+    with codecs.open(os.path.join(*fname), encoding='utf-8') as f:
         return f.read()
 
 
@@ -23,7 +24,13 @@ setup(
     author='Jason Madden',
     author_email='jason@nextthought.com',
     description="NTI Nikola Chameleon",
-    long_description=(_read('README.rst') + '\n\n' + _read('CHANGES.rst')),
+    long_description=(
+        _read('README.rst')
+        + '\n\n'
+        + '\n'.join('    ' + line for line in
+                    _read('src/nti/nikola_chameleon/nti.nikola_chameleon.plugin').splitlines())
+        + '\n\n'
+        + _read('CHANGES.rst')),
     license='Apache',
     keywords='nikola chameleon template',
     classifiers=[
@@ -49,6 +56,7 @@ setup(
         'setuptools',
         'Chameleon',
         'z3c.pt',
+        'zope.dottedname',
         'nikola >= 7.8',
     ],
     extras_require={
@@ -59,5 +67,10 @@ setup(
             'sphinx_rtd_theme',
         ],
     },
+    # See the thread at https://github.com/pypa/pip/issues/2874#issuecomment-109429489
+    # for why we don't try do use data_files.
+    #data_files=[
+    #    ('nikola', ['nti.nikola_chameleon.plugin',]),
+    #],
     entry_points=entry_points,
 )

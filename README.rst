@@ -21,7 +21,23 @@
         :target: https://ntinikola_chameleon.readthedocs.io/en/latest/
         :alt: Documentation Status
 
-A template system for the `nikola
+A template system for the `Nikola
 <https://pypi.python.org/pypi/Nikola>`_ static blog system using
 `Chameleon <https://pypi.python.org/pypi/Chameleon>`_ and `z3c.pt
 <https://pypi.python.org/pypi/z3c.pt>`_.
+
+Nikola uses a `custom mechanism <https://pypi.python.org/pypi/yapsy>`_
+to find plugins instead of using the usual ``pkg_resources`` system.
+That makes it difficult to install plugins; it's not enough just to
+``pip install`` a package from PyPI. Instead, you must *also* copy a
+``.plugin`` file to a particular location on disk. This can be:
+
+- ~/.nikola/plugins/
+- The ``plugins`` directory of your Nikola site.
+
+..
+  Rendering the plugin file must be last, it is done by
+  setup.py (since PyPI does not support the ..include directive.)
+
+The contents of a correct ``nti.nikola_chameleon.plugin`` file are
+delivered with this package. They are also rendered here::

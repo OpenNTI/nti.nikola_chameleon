@@ -11,9 +11,13 @@ include tox.ini
 include .travis.yml
 include *.txt
 include .isort.cfg
+
+
 exclude .nti_cover_package
+
 recursive-include docs *.py
 recursive-include docs *.rst
 recursive-include docs Makefile
 
 recursive-include src *.zcml
+recursive-include src *.plugin
