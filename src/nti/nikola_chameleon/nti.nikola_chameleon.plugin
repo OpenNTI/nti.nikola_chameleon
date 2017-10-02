@@ -1,7 +1,7 @@
 # -*- mode: conf; -*-
 [Core]
 Name = nti.nikola_chameleon
-Module = nti.nikola_chameleon
+Module = nti_nikola_chameleon
 
 [Documentation]
 Author = NextThought
