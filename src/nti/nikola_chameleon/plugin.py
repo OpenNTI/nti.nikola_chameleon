@@ -13,6 +13,7 @@ from chameleon.zpt.template import PageTemplateFile
 from nikola.plugin_categories import TemplateSystem
 from nikola.utils import makedirs
 
+from z3c.pt.pagetemplate import ViewPageTemplate
 import nti.nikola_chameleon
 import z3c.pt.pagetemplate
 from z3c.macro.interfaces import IMacroTemplate
@@ -60,9 +61,15 @@ class TemplateFactory(object):
 
     def __init__(self, path):
         self.path = path
+        # This object is known as "template" while the .pt
+        # is running. We don't add anything to its dict to
+        # allow us to share it, thus cutting down on the
+        # running time.
+        self.template = _ViewPageTemplateFileWithLoad(self.path)
 
-    def __call__(self, *_ignored):
-        return _ViewPageTemplateFileWithLoad(self.path)
+    def __call__(self, view, context):
+        return self.template
+
 
 @interface.implementer(IRequest)
 class Request(object):
@@ -70,6 +77,91 @@ class Request(object):
     # We claim to implement zope.publisher's IRequest in order to
     # be able to use all the pre-registered adapters.
     response = None
+    context = None
+
+    def __init__(self, context, options):
+        # The options dictionary in the templates, AKA
+        # the 'context' argument to render_template.
+        self.context = context
+        self.options = options
+
+    _head_feed_link_tmpl = ViewPageTemplate("""
+    <link tal:define="_link nocall:options/_link"
+          rel="alternate" type="${options/link_type}"
+          title="${options/link_name}" hreflang="${options/language}"
+          href="${python:_link(options['kind'] + '_' + options['link_postfix'], options['classification'], options['language'])}">
+    """)
+
+    def _head_feed_link(self, link_type, link_name, link_postfix, classification, kind, language):
+        if len(self.options['translations']) > 1:
+            raise Exception("Translations not supported")
+
+        context = dict(self.options)
+        context.update(locals())
+        context.pop('self')
+        # Bind the old 'view' object (really a ChameleonTemplates)
+        # to view again.
+        return self._head_feed_link_tmpl(request=self, **context)
+
+    def _feed_head_rss(self, classification=None, kind='index', rss_override=True):
+        options = self.options
+        result = u''
+        if options['rss_link'] and rss_override:
+            result = options['rss_link']
+
+        if (options['generate_rss']
+                and not (options['rss_link'] and rss_override)
+                and kind != 'archive'):
+            if len(options['translations']) > 1:
+                raise Exception("Translations not supported")
+            for language in sorted(options['translations']):
+                if (classification or classification == '') and kind != 'index':
+                    result += self._head_feed_link(
+                        'application/rss+xml',
+                        'RSS for ' + kind + ' ' + classification,
+                        'rss',
+                        classification,
+                        kind,
+                        language)
+                else:
+                    result += self._head_feed_link('application/rss+xml',
+                                                   'RSS',
+                                                   'rss',
+                                                   classification,
+                                                   'index',
+                                                   language)
+        return result
+
+    def _feed_head_atom(self, classification=None, kind='index'):
+        result = u''
+        if self.options['generate_atom']:
+            for language in sorted(self.options['translations']):
+                if (classification or classification == '') and kind != 'index':
+                    result += self._head_feed_link(
+                        'application/atom+xml',
+                        'Atom for ' + kind + ' ' + classification, 'atom',
+                        classification,
+                        kind,
+                        language)
+                else:
+                    result += self._head_feed_link('application/atom+xml', 'Atom', 'atom',
+                                                   classification, 'index', language)
+        return result
+
+    def feed_translations_head(self, classification=None, kind='index',
+                               feeds=True, other=True, rss_override=True,
+                               has_no_feeds=False):
+        result = u''
+        if kind is None:
+            kind = 'index'
+        if feeds and not has_no_feeds:
+            result = self._feed_head_rss(classification,
+                                         'index' if (kind == 'archive' and rss_override) else kind,
+                                         rss_override)
+            result += self._feed_head_atom(classification, kind)
+        # elide support for translations
+        return result
+
 
 class ChameleonTemplates(TemplateSystem):
 
@@ -166,11 +258,12 @@ class ChameleonTemplates(TemplateSystem):
                                              name=template)
         # context becomes the options/ dict.
         # We use self as the context so we can provide useful things
-        # like the nikola site. It needs to be passed in the
-        # The ViewPageTemplate likes to have a request
+        # like the nikola site. It needs to be passed in the options
+        # dict. self also becomes 'view' while the template runs.
         context['context'] = self
-
-        return template(self, request=Request(), **context)
+        # The ViewPageTemplate likes to have a request. We provide
+        # a new object so that it can have access to the context variables.
+        return template(self, request=Request(self, context), **context)
 
     def inject_directory(self, directory):
         """Injects the directory with the lowest priority in the
