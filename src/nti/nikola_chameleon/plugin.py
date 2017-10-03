@@ -22,6 +22,9 @@ from zope import component
 from zope import interface
 from zope.configuration import xmlconfig
 from zope.dottedname import resolve as dottedname
+from zope.publisher.interfaces import IRequest
+from zope.browserpage.simpleviewclass import SimpleViewClass
+import zope.browserpage.simpleviewclass
 
 
 logger = __import__('logging').getLogger(__name__)
@@ -43,9 +46,10 @@ class _ViewPageTemplateFileWithLoad(z3c.pt.pagetemplate.ViewPageTemplateFile):
         d['__loader'] = self._loader
         return d
 
+z3c.pt.pagetemplate.BaseTemplate.expression_types['structure'] =  PageTemplateFile.expression_types['structure']
 z3c.pt.pagetemplate.BaseTemplate.expression_types['load'] = PageTemplateFile.expression_types['load']
 z3c.macro.zcml.ViewPageTemplateFile = _ViewPageTemplateFileWithLoad
-z3c.macro.zcml.ViewPageTemplateFile = _ViewPageTemplateFileWithLoad
+zope.browserpage.simpleviewclass.ViewPageTemplateFile = _ViewPageTemplateFileWithLoad
 
 class ITemplate(interface.Interface):
     """
@@ -59,6 +63,13 @@ class TemplateFactory(object):
 
     def __call__(self, *_ignored):
         return _ViewPageTemplateFileWithLoad(self.path)
+
+@interface.implementer(IRequest)
+class Request(object):
+    # Minimum request-like object to use when rendering
+    # We claim to implement zope.publisher's IRequest in order to
+    # be able to use all the pre-registered adapters.
+    response = None
 
 class ChameleonTemplates(TemplateSystem):
 
@@ -79,7 +90,6 @@ class ChameleonTemplates(TemplateSystem):
         # with those. Zope would use a <page> or <view> directive.
         # The Chamelean PageTemplateFile supports a 'search_path' argument,
         # and theoretically that could be passed through all the layers.
-
         for d in directories:
             self._provide_templates_from_directory(d)
 
@@ -88,7 +98,9 @@ class ChameleonTemplates(TemplateSystem):
         cache_dir = None
         if  not 'CHAMELEON_CACHE' in os.environ or \
             not os.path.isdir(os.path.expanduser(os.environ['CHAMELEON_CACHE'])):
-            os.environ['CHAMELEON_CACHE'] = cache_dir = os.path.join(cache_folder, 'chameleon_cache')
+            cache_dir = os.path.abspath(os.path.join(cache_folder, 'chameleon_cache'))
+            makedirs(cache_dir)
+            os.environ['CHAMELEON_CACHE'] = cache_dir
         else:
             cache_dir = os.environ['CHAMELEON_CACHE']
 
@@ -146,7 +158,12 @@ class ChameleonTemplates(TemplateSystem):
         template = component.getMultiAdapter((self, context),
                                              ITemplate,
                                              name=template)
-        return template(**context)
+        # context becomes the options/ dict.
+        # We use self as the context so we can provide useful things
+        # like the nikola site. It needs to be passed in the
+        # The ViewPageTemplate likes to have a request
+        context['context'] = self
+        return template(self, request=Request(), **context)
 
     def inject_directory(self, directory):
         """Injects the directory with the lowest priority in the
@@ -154,11 +171,16 @@ class ChameleonTemplates(TemplateSystem):
 
         # This is called very early, that's the only reason that it gets
         # set low in the chains. It's called for each template plugin?
-
         self._provide_templates_from_directory(directory)
 
 
     def _provide_templates_from_directory(self, directory):
+        if not isinstance(directory, str) and str is bytes:
+            # nikola likes to provide these as unicode on Python 2,
+            # which is incorrect (unless maybe on windows?)
+            # Ideally we'd decode using the filesystem decoding or something,
+            # right now we just assume the locale decodes right.
+            directory = directory.encode("utf-8")
         theme_zcml = os.path.join(directory, 'theme.zcml')
         if os.path.exists(theme_zcml):
             xmlconfig.xmlconfig(theme_zcml)
@@ -168,14 +190,27 @@ class ChameleonTemplates(TemplateSystem):
             # .macro.pt
             gsm = component.getGlobalSiteManager()
             for macro_file in glob.glob(os.path.join(directory, "*.macro.pt")):
-                name = macro_file[:len('.macro.pt')]
+                name = os.path.basename(macro_file)
+                name = name[:-len('.macro.pt')] # XXX probably buggy
+                macro_file = os.path.abspath(macro_file)
                 factory = MacroFactory(macro_file, name, 'text/html')
                 gsm.registerAdapter(factory, provides=(IMacroTemplate),
                                     requires=(interface.Interface, interface.Interface,
                                               interface.Interface))
 
             for template_file in glob.glob(os.path.join(directory, "*.tmpl.pt")):
-                name = template_file[:len(".tmpl.pt")]
-                factory = TemplateFactory(template_file, name, 'text/html')
-                gsm.registerAdapter(factory, provides=(ITemplate),
-                                    requires=(interface.Interface, interface.Interface))
+                name = os.path.basename(template_file)
+                name = name[:-len(".pt")]
+                template_file = os.path.abspath(template_file)
+                factory = TemplateFactory(template_file)
+                # Register them as template adapters for us.
+                gsm.registerAdapter(factory,
+                                    provided=(ITemplate),
+                                    required=(interface.Interface, interface.Interface),
+                                    name=name)
+
+                # Register them as views for traversing
+                gsm.registerAdapter(SimpleViewClass(template_file, name=name),
+                                    provided=interface.Interface,
+                                    required=(interface.Interface, interface.Interface),
+                                    name=name)
