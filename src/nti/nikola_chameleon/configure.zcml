@@ -17,5 +17,9 @@
 
 	<include package="z3c.macro" />
 
+    <!-- An @@macros view for binding macros to a context -->
+    <adapter for="* *"
+             factory=".plugin.NamedMacroView"
+             name="macros" />
 
 </configure>

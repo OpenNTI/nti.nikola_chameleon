@@ -3,8 +3,11 @@
 The Chameleon ZPT plugin for nikola.
 
 """
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
+# stdlib imports
 import glob
 import os
 import os.path
@@ -12,21 +15,25 @@ import os.path
 from chameleon.zpt.template import PageTemplateFile
 from nikola.plugin_categories import TemplateSystem
 from nikola.utils import makedirs
-
-from z3c.pt.pagetemplate import ViewPageTemplate
-import nti.nikola_chameleon
-import z3c.pt.pagetemplate
 from z3c.macro.interfaces import IMacroTemplate
-from z3c.macro.zcml import MacroFactory
+from z3c.macro.tales import get_macro_template
 import z3c.macro.zcml
+from z3c.macro.zcml import MacroFactory
+import z3c.pt.pagetemplate
+from z3c.pt.pagetemplate import ViewPageTemplate
 from zope import component
 from zope import interface
+import zope.browserpage.simpleviewclass
+from zope.browserpage.simpleviewclass import SimpleViewClass
+import zope.browserpage.viewpagetemplatefile
 from zope.configuration import xmlconfig
 from zope.dottedname import resolve as dottedname
-from zope.publisher.interfaces import IRequest
-from zope.browserpage.simpleviewclass import SimpleViewClass
-import zope.browserpage.simpleviewclass
 
+import zope.pagetemplate.pagetemplatefile
+from zope.publisher.interfaces import IRequest
+from zope.traversing.interfaces import ITraversable
+
+import nti.nikola_chameleon
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -47,7 +54,7 @@ class _ViewPageTemplateFileWithLoad(z3c.pt.pagetemplate.ViewPageTemplateFile):
         d['__loader'] = self._loader
         return d
 
-z3c.pt.pagetemplate.BaseTemplate.expression_types['structure'] =  PageTemplateFile.expression_types['structure']
+z3c.pt.pagetemplate.BaseTemplate.expression_types['structure'] = PageTemplateFile.expression_types['structure']
 z3c.pt.pagetemplate.BaseTemplate.expression_types['load'] = PageTemplateFile.expression_types['load']
 z3c.macro.zcml.ViewPageTemplateFile = _ViewPageTemplateFileWithLoad
 zope.browserpage.simpleviewclass.ViewPageTemplateFile = _ViewPageTemplateFileWithLoad
@@ -65,10 +72,36 @@ class TemplateFactory(object):
         # is running. We don't add anything to its dict to
         # allow us to share it, thus cutting down on the
         # running time.
+        # Using z.p.p.PTF seems to disable caching.
+        #self.template = zope.browserpage.viewpagetemplatefile.ViewPageTemplateFile(self.path)
         self.template = _ViewPageTemplateFileWithLoad(self.path)
 
     def __call__(self, view, context):
         return self.template
+
+
+
+class BoundMacro(object):
+
+    def __init__(self, context, func):
+        self.context = context
+        self.func = func
+
+    def include(self, stream, econtext, *args, **kwargs):
+        # This is a copy
+        econtext['context'] = self.context
+        return self.func.include(stream, econtext, *args, **kwargs)
+
+@interface.implementer(ITraversable)
+class NamedMacroView(object):
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def traverse(self, name, ignored):
+        return BoundMacro(self.context,
+                          get_macro_template(self.context, None, self.request, name))
 
 
 @interface.implementer(IRequest)
@@ -78,12 +111,17 @@ class Request(object):
     # be able to use all the pre-registered adapters.
     response = None
     context = None
+    debug = False
 
     def __init__(self, context, options):
         # The options dictionary in the templates, AKA
         # the 'context' argument to render_template.
         self.context = context
         self.options = options
+        self.response = self
+
+    def getHeader(self, name): # response
+        return 'text/html'
 
     _head_feed_link_tmpl = ViewPageTemplate("""
     <link tal:define="_link nocall:options/_link"
@@ -169,19 +207,13 @@ class ChameleonTemplates(TemplateSystem):
 
     def __init__(self):
         super(ChameleonTemplates, self).__init__()
-        xmlconfig.file('configure.zcml', nti.nikola_chameleon)
+        self._conf_context = xmlconfig.file('configure.zcml', nti.nikola_chameleon)
 
     def set_directories(self, directories, cache_folder):
         """Sets the list of folders where templates are located and cache."""
         # A list of directories where the templates will be
         # located. Most template systems have some sort of
         # template loading tool that can use this.
-
-        # But we can get macros and etc from the directory.
-        # XXX What about entire templates? We need a way to deal
-        # with those. Zope would use a <page> or <view> directive.
-        # The Chamelean PageTemplateFile supports a 'search_path' argument,
-        # and theoretically that could be passed through all the layers.
 
         # They are passed from most specific (project templates)
         # to least specific (parent themes), so we need to reverse the order
@@ -260,10 +292,14 @@ class ChameleonTemplates(TemplateSystem):
         # We use self as the context so we can provide useful things
         # like the nikola site. It needs to be passed in the options
         # dict. self also becomes 'view' while the template runs.
+        request = Request(self, context)
+        # for zope.browserpage, assumes it's on the view object.
+        # chameleon/z3c.pt will use the kwargs
+
         context['context'] = self
         # The ViewPageTemplate likes to have a request. We provide
         # a new object so that it can have access to the context variables.
-        return template(self, request=Request(self, context), **context)
+        return template(self, request=request, **context)
 
     def inject_directory(self, directory):
         """Injects the directory with the lowest priority in the
@@ -283,35 +319,39 @@ class ChameleonTemplates(TemplateSystem):
             directory = directory.encode("utf-8")
 
         directory = os.path.abspath(directory)
+
+        # Register macros for each macro found in each .macro.pt
+        # file. This doesn't deal with naming conflicts.
+        gsm = component.getGlobalSiteManager()
+        for macro_file in glob.glob(os.path.join(directory, "*.macro.pt")):
+            template = _ViewPageTemplateFileWithLoad(macro_file)
+            for name in template.macros.names:
+                factory = MacroFactory(macro_file, name, 'text/html')
+                gsm.registerAdapter(factory,
+                                    provided=(IMacroTemplate),
+                                    required=(interface.Interface, interface.Interface,
+                                              interface.Interface),
+                                    name=name)
+
+
+        for template_file in glob.glob(os.path.join(directory, "*.tmpl.pt")):
+
+            name = os.path.basename(template_file)
+            name = name[:-len(".pt")]
+            factory = TemplateFactory(template_file)
+            # Register them as template adapters for us.
+            gsm.registerAdapter(factory,
+                                provided=(ITemplate),
+                                required=(interface.Interface, interface.Interface),
+                                name=name)
+
+            # Register them as views for traversing
+            gsm.registerAdapter(SimpleViewClass(template_file, name=name),
+                                provided=interface.Interface,
+                                required=(interface.Interface, interface.Interface),
+                                name=name)
+
         theme_zcml = os.path.join(directory, 'theme.zcml')
         if os.path.exists(theme_zcml):
-            xmlconfig.xmlconfig(theme_zcml)
-        else:
-            # Register macros for each macro found in each .macro.pt
-            # file. This doesn't deal with naming conflicts.
-            gsm = component.getGlobalSiteManager()
-            for macro_file in glob.glob(os.path.join(directory, "*.macro.pt")):
-                template = _ViewPageTemplateFileWithLoad(macro_file)
-                for name in template.macros.names:
-                    factory = MacroFactory(macro_file, name, 'text/html')
-                    gsm.registerAdapter(factory,
-                                        provided=(IMacroTemplate),
-                                        required=(interface.Interface, interface.Interface,
-                                                  interface.Interface),
-                                        name=name)
-
-            for template_file in glob.glob(os.path.join(directory, "*.tmpl.pt")):
-                name = os.path.basename(template_file)
-                name = name[:-len(".pt")]
-                factory = TemplateFactory(template_file)
-                # Register them as template adapters for us.
-                gsm.registerAdapter(factory,
-                                    provided=(ITemplate),
-                                    required=(interface.Interface, interface.Interface),
-                                    name=name)
-
-                # Register them as views for traversing
-                gsm.registerAdapter(SimpleViewClass(template_file, name=name),
-                                    provided=interface.Interface,
-                                    required=(interface.Interface, interface.Interface),
-                                    name=name)
+            # Let any explicit directions take precedence.
+            xmlconfig.file(theme_zcml, context=self._conf_context)
