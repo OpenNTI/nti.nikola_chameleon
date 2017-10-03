@@ -90,7 +90,12 @@ class ChameleonTemplates(TemplateSystem):
         # with those. Zope would use a <page> or <view> directive.
         # The Chamelean PageTemplateFile supports a 'search_path' argument,
         # and theoretically that could be passed through all the layers.
-        for d in directories:
+
+        # They are passed from most specific (project templates)
+        # to least specific (parent themes), so we need to reverse the order
+        # so that more specific templates are registered last and thus
+        # override.
+        for d in reversed(directories):
             self._provide_templates_from_directory(d)
 
         # We do set up the cache, though.
@@ -155,6 +160,7 @@ class ChameleonTemplates(TemplateSystem):
         # template_name is the name of the template file,
         # context is a dictionary containing the data the template
         # uses for rendering.
+
         template = component.getMultiAdapter((self, context),
                                              ITemplate,
                                              name=template)
@@ -163,6 +169,7 @@ class ChameleonTemplates(TemplateSystem):
         # like the nikola site. It needs to be passed in the
         # The ViewPageTemplate likes to have a request
         context['context'] = self
+
         return template(self, request=Request(), **context)
 
     def inject_directory(self, directory):
