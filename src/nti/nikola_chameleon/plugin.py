@@ -181,27 +181,28 @@ class ChameleonTemplates(TemplateSystem):
             # Ideally we'd decode using the filesystem decoding or something,
             # right now we just assume the locale decodes right.
             directory = directory.encode("utf-8")
+
+        directory = os.path.abspath(directory)
         theme_zcml = os.path.join(directory, 'theme.zcml')
         if os.path.exists(theme_zcml):
             xmlconfig.xmlconfig(theme_zcml)
         else:
-            # Register macros named the basename of the file
-            # for all files in the directory that end in
-            # .macro.pt
+            # Register macros for each macro found in each .macro.pt
+            # file. This doesn't deal with naming conflicts.
             gsm = component.getGlobalSiteManager()
             for macro_file in glob.glob(os.path.join(directory, "*.macro.pt")):
-                name = os.path.basename(macro_file)
-                name = name[:-len('.macro.pt')] # XXX probably buggy
-                macro_file = os.path.abspath(macro_file)
-                factory = MacroFactory(macro_file, name, 'text/html')
-                gsm.registerAdapter(factory, provides=(IMacroTemplate),
-                                    requires=(interface.Interface, interface.Interface,
-                                              interface.Interface))
+                template = _ViewPageTemplateFileWithLoad(macro_file)
+                for name in template.macros.names:
+                    factory = MacroFactory(macro_file, name, 'text/html')
+                    gsm.registerAdapter(factory,
+                                        provided=(IMacroTemplate),
+                                        required=(interface.Interface, interface.Interface,
+                                                  interface.Interface),
+                                        name=name)
 
             for template_file in glob.glob(os.path.join(directory, "*.tmpl.pt")):
                 name = os.path.basename(template_file)
                 name = name[:-len(".pt")]
-                template_file = os.path.abspath(template_file)
                 factory = TemplateFactory(template_file)
                 # Register them as template adapters for us.
                 gsm.registerAdapter(factory,
