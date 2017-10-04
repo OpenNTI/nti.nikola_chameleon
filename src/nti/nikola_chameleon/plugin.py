@@ -200,6 +200,63 @@ class Request(object):
         # elide support for translations
         return result
 
+    _html_feed_link_tmpl = ViewPageTemplate("""
+    <a tal:define="_link nocall:options/_link;
+                   messages nocall:options/messages;
+                   language options/language;
+                   link_name options/link_name;"
+          type="${options/link_type}"
+          title="${link_name}" hreflang="${language}"
+          href="${python:_link(options['kind'] + '_' + options['link_postfix'], options['classification'], language)}"
+    >
+    ${python:messages(link_name, language)}${options/extra}
+    </a>
+    """)
+#
+    def _html_feed_link(self, link_type, link_name, link_postfix, classification, kind, language,
+                        name=None):
+        # Elide translations
+        context = dict(self.options)
+        context.update(locals())
+        context.pop('self')
+
+        extra = u''
+        if name and kind != "archive" and kind != "author":
+            extra = " (" + name + ")"
+        # Bind the old 'view' object (really a ChameleonTemplates)
+        # to view again.
+        return self._html_feed_link_tmpl(request=self, extra=extra, **context)
+
+
+    def feed_link(self, classification, kind):
+        options = self.options
+        generate_atom = options['generate_atom']
+        generate_rss = options['generate_rss']
+        translations = options['translations']
+
+        if not (generate_atom or generate_rss):
+            return ''
+        # Elide translations
+        strs = []
+        for language in sorted(translations):
+            strs.append('<p class="feedlink">')
+            if generate_atom:
+                strs.append(self._html_feed_link('application/atom+xml',
+                                                 'Atom feed',
+                                                 'atom',
+                                                 classification, kind, language))
+
+            if generate_rss and kind != 'archive':
+                strs.append(self._html_feed_link('application/rss+xml',
+                                                 'RSS feed',
+                                                 'rss',
+                                                 classification, kind, language))
+
+            strs.append("</p>")
+        result = '\n'.join(strs)
+        return result
+
+
 
 class ChameleonTemplates(TemplateSystem):
 
