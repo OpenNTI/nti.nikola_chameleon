@@ -19,7 +19,7 @@
 
     <!-- An @@macros view for binding macros to a context -->
     <adapter for="* *"
-             factory=".plugin.NamedMacroView"
+             factory=".macro.NamedMacroView"
              name="macros" />
 
 </configure>

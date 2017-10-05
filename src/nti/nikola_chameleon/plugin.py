@@ -12,251 +12,35 @@ import glob
 import os
 import os.path
 
-from chameleon.zpt.template import PageTemplateFile
+
 from nikola.plugin_categories import TemplateSystem
 from nikola.utils import makedirs
 from z3c.macro.interfaces import IMacroTemplate
-from z3c.macro.tales import get_macro_template
-import z3c.macro.zcml
+
 from z3c.macro.zcml import MacroFactory
-import z3c.pt.pagetemplate
-from z3c.pt.pagetemplate import ViewPageTemplate
+
+
 from zope import component
 from zope import interface
-import zope.browserpage.simpleviewclass
+
 from zope.browserpage.simpleviewclass import SimpleViewClass
-import zope.browserpage.viewpagetemplatefile
+
 from zope.configuration import xmlconfig
 from zope.dottedname import resolve as dottedname
 
-import zope.pagetemplate.pagetemplatefile
-from zope.publisher.interfaces import IRequest
-from zope.traversing.interfaces import ITraversable
-
 import nti.nikola_chameleon
+from nti.nikola_chameleon import interfaces
+from .request import Request
+from .interfaces import ITemplate
+from .template import ViewPageTemplateFileWithLoad
+from .template import TemplateFactory
 
-logger = __import__('logging').getLogger(__name__)
 
-class _ViewPageTemplateFileWithLoad(z3c.pt.pagetemplate.ViewPageTemplateFile):
+class Context(object):
     """
-    Enables the load: expression type for convenience.
+    Instances of this object will be the context
+    of a template when no post is available.
     """
-    # NOTE: We cannot do the rational thing and copy this
-    # and modify our local value. This is because
-    # certain packages, notably z3c.macro,
-    # modify the superclass's value; depending on the order
-    # of import, we may or may not get that change.
-    # So we do the bad thing too and modify the superclass also
-
-    @property
-    def builtins(self):
-        d = super(_ViewPageTemplateFileWithLoad, self).builtins
-        d['__loader'] = self._loader
-        return d
-
-z3c.pt.pagetemplate.BaseTemplate.expression_types['structure'] = PageTemplateFile.expression_types['structure']
-z3c.pt.pagetemplate.BaseTemplate.expression_types['load'] = PageTemplateFile.expression_types['load']
-z3c.macro.zcml.ViewPageTemplateFile = _ViewPageTemplateFileWithLoad
-zope.browserpage.simpleviewclass.ViewPageTemplateFile = _ViewPageTemplateFileWithLoad
-
-class ITemplate(interface.Interface):
-    """
-    A template.
-    """
-
-class TemplateFactory(object):
-
-    def __init__(self, path):
-        self.path = path
-        # This object is known as "template" while the .pt
-        # is running. We don't add anything to its dict to
-        # allow us to share it, thus cutting down on the
-        # running time.
-        # Using z.p.p.PTF seems to disable caching.
-        #self.template = zope.browserpage.viewpagetemplatefile.ViewPageTemplateFile(self.path)
-        self.template = _ViewPageTemplateFileWithLoad(self.path)
-
-    def __call__(self, view, context):
-        return self.template
-
-
-
-class BoundMacro(object):
-
-    def __init__(self, context, func):
-        self.context = context
-        self.func = func
-
-    def include(self, stream, econtext, *args, **kwargs):
-        # This is a copy
-        econtext['context'] = self.context
-        return self.func.include(stream, econtext, *args, **kwargs)
-
-@interface.implementer(ITraversable)
-class NamedMacroView(object):
-
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
-
-    def traverse(self, name, ignored):
-        return BoundMacro(self.context,
-                          get_macro_template(self.context, None, self.request, name))
-
-
-@interface.implementer(IRequest)
-class Request(object):
-    # Minimum request-like object to use when rendering
-    # We claim to implement zope.publisher's IRequest in order to
-    # be able to use all the pre-registered adapters.
-    response = None
-    context = None
-    debug = False
-
-    def __init__(self, context, options):
-        # The options dictionary in the templates, AKA
-        # the 'context' argument to render_template.
-        self.context = context
-        self.options = options
-        self.response = self
-
-    def getHeader(self, name): # response
-        return 'text/html'
-
-    _head_feed_link_tmpl = ViewPageTemplate("""
-    <link tal:define="_link nocall:options/_link"
-          rel="alternate" type="${options/link_type}"
-          title="${options/link_name}" hreflang="${options/language}"
-          href="${python:_link(options['kind'] + '_' + options['link_postfix'], options['classification'], options['language'])}">
-    """)
-
-    def _head_feed_link(self, link_type, link_name, link_postfix, classification, kind, language):
-        if len(self.options['translations']) > 1:
-            raise Exception("Translations not supported")
-
-        context = dict(self.options)
-        context.update(locals())
-        context.pop('self')
-        # Bind the old 'view' object (really a ChameleonTemplates)
-        # to view again.
-        return self._head_feed_link_tmpl(request=self, **context)
-
-    def _feed_head_rss(self, classification=None, kind='index', rss_override=True):
-        options = self.options
-        result = u''
-        if options['rss_link'] and rss_override:
-            result = options['rss_link']
-
-        if (options['generate_rss']
-                and not (options['rss_link'] and rss_override)
-                and kind != 'archive'):
-            if len(options['translations']) > 1:
-                raise Exception("Translations not supported")
-            for language in sorted(options['translations']):
-                if (classification or classification == '') and kind != 'index':
-                    result += self._head_feed_link(
-                        'application/rss+xml',
-                        'RSS for ' + kind + ' ' + classification,
-                        'rss',
-                        classification,
-                        kind,
-                        language)
-                else:
-                    result += self._head_feed_link('application/rss+xml',
-                                                   'RSS',
-                                                   'rss',
-                                                   classification,
-                                                   'index',
-                                                   language)
-        return result
-
-    def _feed_head_atom(self, classification=None, kind='index'):
-        result = u''
-        if self.options['generate_atom']:
-            for language in sorted(self.options['translations']):
-                if (classification or classification == '') and kind != 'index':
-                    result += self._head_feed_link(
-                        'application/atom+xml',
-                        'Atom for ' + kind + ' ' + classification, 'atom',
-                        classification,
-                        kind,
-                        language)
-                else:
-                    result += self._head_feed_link('application/atom+xml', 'Atom', 'atom',
-                                                   classification, 'index', language)
-        return result
-
-    def feed_translations_head(self, classification=None, kind='index',
-                               feeds=True, other=True, rss_override=True,
-                               has_no_feeds=False):
-        result = u''
-        if kind is None:
-            kind = 'index'
-        if feeds and not has_no_feeds:
-            result = self._feed_head_rss(classification,
-                                         'index' if (kind == 'archive' and rss_override) else kind,
-                                         rss_override)
-            result += self._feed_head_atom(classification, kind)
-        # elide support for translations
-        return result
-
-    _html_feed_link_tmpl = ViewPageTemplate("""
-    <a tal:define="_link nocall:options/_link;
-                   messages nocall:options/messages;
-                   language options/language;
-                   link_name options/link_name;"
-          type="${options/link_type}"
-          title="${link_name}" hreflang="${language}"
-          href="${python:_link(options['kind'] + '_' + options['link_postfix'], options['classification'], language)}"
-    >
-    ${python:messages(link_name, language)}${options/extra}
-    </a>
-    """)
-#
-    def _html_feed_link(self, link_type, link_name, link_postfix, classification, kind, language,
-                        name=None):
-        # Elide translations
-        context = dict(self.options)
-        context.update(locals())
-        context.pop('self')
-
-        extra = u''
-        if name and kind != "archive" and kind != "author":
-            extra = " (" + name + ")"
-        # Bind the old 'view' object (really a ChameleonTemplates)
-        # to view again.
-        return self._html_feed_link_tmpl(request=self, extra=extra, **context)
-
-
-    def feed_link(self, classification, kind):
-        options = self.options
-        generate_atom = options['generate_atom']
-        generate_rss = options['generate_rss']
-        translations = options['translations']
-
-        if not (generate_atom or generate_rss):
-            return ''
-        # Elide translations
-        strs = []
-        for language in sorted(translations):
-            strs.append('<p class="feedlink">')
-            if generate_atom:
-                strs.append(self._html_feed_link('application/atom+xml',
-                                                 'Atom feed',
-                                                 'atom',
-                                                 classification, kind, language))
-
-            if generate_rss and kind != 'archive':
-                strs.append(self._html_feed_link('application/rss+xml',
-                                                 'RSS feed',
-                                                 'rss',
-                                                 classification, kind, language))
-
-            strs.append("</p>")
-        result = '\n'.join(strs)
-        return result
-
-
 
 class ChameleonTemplates(TemplateSystem):
 
@@ -290,7 +74,6 @@ class ChameleonTemplates(TemplateSystem):
         else:
             cache_dir = os.environ['CHAMELEON_CACHE']
 
-        logger.debug("Configuring chamelean to cache at %s", cache_dir)
         conf_mod = dottedname.resolve('chameleon.config')
         if conf_mod.CACHE_DIRECTORY != cache_dir:
             # previously imported before we set the environment
@@ -342,21 +125,41 @@ class ChameleonTemplates(TemplateSystem):
         # context is a dictionary containing the data the template
         # uses for rendering.
 
-        template = component.getMultiAdapter((self, context),
+        # context becomes the options dict.
+        options = context
+        # self becomes view.
+        view = self
+        # The post, if given, becomes the context.
+        # Otherwise, it's a dummy object.
+        context = options.get('post')
+
+        if context is not None:
+            # We only render these things once in a given run,
+            # so we don't bother stripping the interfaces off of it
+            # or using a proxy.
+            assert not interfaces.IPageKind.providedBy(context)
+            interface.alsoProvides(context, interfaces.IPostPage)
+        else:
+            context = Context()
+
+        request = Request(context, options)
+        # apply the "layer" to the request
+        pagekind = frozenset(options.get('pagekind', ()))
+        interface.alsoProvides(request, interfaces.PAGEKINDS[pagekind])
+
+        template = component.getMultiAdapter((context, request),
                                              ITemplate,
                                              name=template)
-        # context becomes the options/ dict.
-        # We use self as the context so we can provide useful things
-        # like the nikola site. It needs to be passed in the options
-        # dict. self also becomes 'view' while the template runs.
-        request = Request(self, context)
-        # for zope.browserpage, assumes it's on the view object.
+
+
+        # Make the context available.
+        # zope.browserpage, assumes it's on the view object.
         # chameleon/z3c.pt will use the kwargs
 
-        context['context'] = self
+        options['context'] = context
         # The ViewPageTemplate likes to have a request. We provide
         # a new object so that it can have access to the context variables.
-        return template(self, request=request, **context)
+        return template(view, request=request, **options)
 
     def inject_directory(self, directory):
         """Injects the directory with the lowest priority in the
@@ -381,7 +184,7 @@ class ChameleonTemplates(TemplateSystem):
         # file. This doesn't deal with naming conflicts.
         gsm = component.getGlobalSiteManager()
         for macro_file in glob.glob(os.path.join(directory, "*.macro.pt")):
-            template = _ViewPageTemplateFileWithLoad(macro_file)
+            template = ViewPageTemplateFileWithLoad(macro_file)
             for name in template.macros.names:
                 factory = MacroFactory(macro_file, name, 'text/html')
                 gsm.registerAdapter(factory,
