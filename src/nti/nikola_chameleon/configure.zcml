@@ -22,4 +22,11 @@
              factory=".macro.NamedMacroView"
              name="macros" />
 
+    <adapter
+        for=".interfaces.IPost"
+        factory=".adapters.MetaPathAdapter"
+        provides="zope.traversing.interfaces.IPathAdapter"
+        name="meta"/>
+
+
 </configure>

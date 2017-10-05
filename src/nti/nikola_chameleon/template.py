@@ -11,6 +11,8 @@ from chameleon.zpt.template import PageTemplateFile
 import z3c.macro.zcml
 from z3c.pt.pagetemplate import ViewPageTemplateFile
 from z3c.pt.pagetemplate import BaseTemplate
+import z3c.pt.namespaces
+import zope.pagetemplate.engine
 import zope.browserpage.simpleviewclass
 import zope.browserpage.viewpagetemplatefile
 import zope.pagetemplate.pagetemplatefile
@@ -54,3 +56,8 @@ class TemplateFactory(object):
 
     def __call__(self, context, request):
         return self.template
+
+# We also fix the namespaces in z3c.pt.namespaces to use the
+# real namespace object.
+# See https://github.com/zopefoundation/z3c.pt/issues/3
+z3c.pt.namespaces.function_namespaces = zope.pagetemplate.engine.Engine.namespaces
