@@ -206,7 +206,7 @@ class ChameleonTemplates(TemplateSystem):
                                 name=name)
 
             # Register them as views for traversing
-            gsm.registerAdapter(SimpleViewClass(template_file, name=name),
+            gsm.registerAdapter(SimpleViewClass(template_file, offering='', name=name),
                                 provided=interface.Interface,
                                 required=(interface.Interface, interface.Interface),
                                 name=name)
