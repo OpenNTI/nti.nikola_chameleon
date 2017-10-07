@@ -49,6 +49,8 @@ class ChameleonTemplates(TemplateSystem):
     def __init__(self):
         super(ChameleonTemplates, self).__init__()
         self._conf_context = xmlconfig.file('configure.zcml', nti.nikola_chameleon)
+        self._template_paths = []
+        self._injected_template_paths = []
 
     def set_directories(self, directories, cache_folder):
         """Sets the list of folders where templates are located and cache."""
@@ -60,8 +62,7 @@ class ChameleonTemplates(TemplateSystem):
         # to least specific (parent themes), so we need to reverse the order
         # so that more specific templates are registered last and thus
         # override.
-        for d in reversed(directories):
-            self._provide_templates_from_directory(d)
+        self._template_paths.extend(reversed(directories))
 
         # We do set up the cache, though.
 
@@ -124,6 +125,7 @@ class ChameleonTemplates(TemplateSystem):
         # template_name is the name of the template file,
         # context is a dictionary containing the data the template
         # uses for rendering.
+        self._provide_templates()
 
         # context becomes the options dict.
         options = context
@@ -167,8 +169,16 @@ class ChameleonTemplates(TemplateSystem):
 
         # This is called very early, that's the only reason that it gets
         # set low in the chains. It's called for each template plugin?
-        self._provide_templates_from_directory(directory)
+        self._injected_template_paths.append(directory)
 
+    def _provide_templates(self):
+        for d in self._injected_template_paths:
+            self._provide_templates_from_directory(d)
+        self._injected_template_paths = []
+
+        for d in self._template_paths:
+            self._provide_templates_from_directory(d)
+        self._template_paths = []
 
     def _provide_templates_from_directory(self, directory):
         if not isinstance(directory, str) and str is bytes:
