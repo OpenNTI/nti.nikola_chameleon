@@ -8,6 +8,7 @@ from __future__ import division
 from __future__ import print_function
 
 # stdlib imports
+from collections import defaultdict
 import glob
 import os
 import os.path
@@ -35,6 +36,7 @@ from .interfaces import ITemplate
 from .template import ViewPageTemplateFileWithLoad
 from .template import TemplateFactory
 
+logger = __import__('logging').getLogger(__name__)
 
 class Context(object):
     """
@@ -190,13 +192,18 @@ class ChameleonTemplates(TemplateSystem):
 
         directory = os.path.abspath(directory)
 
+        seen_macros = defaultdict(set)
         # Register macros for each macro found in each .macro.pt
         # file. This doesn't deal with naming conflicts.
         gsm = component.getGlobalSiteManager()
-        for macro_file in glob.glob(os.path.join(directory, "*.macro.pt")):
+        for macro_file in sorted(glob.glob(os.path.join(directory, "*.macro.pt"))):
             template = ViewPageTemplateFileWithLoad(macro_file)
             for name in template.macros.names:
                 factory = MacroFactory(macro_file, name, 'text/html')
+                if name in seen_macros:
+                    logger.warning("Duplicate macro '%s' in %s and %s",
+                                   name, seen_macros[name], macro_file)
+                seen_macros[name].add(macro_file)
                 gsm.registerAdapter(factory,
                                     provided=(IMacroTemplate),
                                     required=(interface.Interface, interface.Interface,
@@ -204,7 +211,7 @@ class ChameleonTemplates(TemplateSystem):
                                     name=name)
 
 
-        for template_file in glob.glob(os.path.join(directory, "*.tmpl.pt")):
+        for template_file in sorted(glob.glob(os.path.join(directory, "*.tmpl.pt"))):
 
             name = os.path.basename(template_file)
             name = name[:-len(".pt")]
