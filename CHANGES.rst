@@ -5,4 +5,6 @@
 0.0.1a1 (unreleased)
 ====================
 
-- Nothing yet.
+- Preliminary PyPI release. While this package is functional, it is
+  not yet documented sufficiently to be of general use. It is also not
+  expected to be fully stable.

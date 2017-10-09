@@ -125,7 +125,7 @@ class IPostPage(IPost, IPageKind):
 def _build(iface, result):
     kinds = iface.getTaggedValue('__pagekinds__')
     kinds = frozenset(kinds)
-    if kinds in result and kinds:
+    if kinds in result and kinds: # pragma: no cover
         raise ValueError("Duplicate pagkeinds", kinds, iface)
 
     if kinds not in result:
