@@ -33,7 +33,7 @@ import nti.nikola_chameleon
 from nti.nikola_chameleon import interfaces
 from .request import Request
 from .interfaces import ITemplate
-from .template import ViewPageTemplateFileWithLoad
+from .template import NikolaPageFileTemplate
 from .template import TemplateFactory
 
 logger = __import__('logging').getLogger(__name__)
@@ -45,6 +45,11 @@ class Context(object):
     """
 
 class ChameleonTemplates(TemplateSystem):
+
+    # pylint:disable=abstract-method
+    # get_deps, get_string_deps, and get_template_path
+    # don't seem to be called? Leave them as unimplemented.
+
 
     name = 'nti.nikola_chameleon'
 
@@ -87,6 +92,7 @@ class ChameleonTemplates(TemplateSystem):
             template_mod = dottedname.resolve('chameleon.template')
             if template_mod.CACHE_DIRECTORY != conf_mod.CACHE_DIRECTORY:
                 template_mod.CACHE_DIRECTORY = conf_mod.CACHE_DIRECTORY
+                # pylint:disable=protected-access
                 template_mod.BaseTemplate.loader = template_mod._make_module_loader()
 
             # Creating these guys with debug or autoreload, as Pyramid does when its
@@ -100,13 +106,27 @@ class ChameleonTemplates(TemplateSystem):
         # when changed, may affect the template's output.
         # usually this involves template inheritance and
         # inclusion.
-        #
-        # XXX: I don't know how to implement this for Chameleon,
-        # especially not if we enable macros.
-        return []
 
-    get_deps = template_deps
-    get_string_deps = template_deps
+        # Of the three methods that provide dependencies, this
+        # seems to be the only one that gets called.
+
+        # Just the name isn't very much to go on, because we can
+        # potentially be rendering different things based on the
+        # kind of context we have, if that's customized in theme.zcml.
+        self._provide_templates()
+        try:
+            template = component.getMultiAdapter((object(), object()),
+                                                 ITemplate,
+                                                 name=template_name)
+        except LookupError:
+            return []
+
+        # This doesn't really get us very far, because template
+        # inclusion/extension is implemented via macros and traversal,
+        # which aren't directly recorded in the source. But at least we can
+        # get direct template file modifications.
+        return [template.filename]
+
 
     def render_template(self, template_name, output_name, context):
         """Renders template to a file using context.
@@ -159,10 +179,8 @@ class ChameleonTemplates(TemplateSystem):
         # Make the context available.
         # zope.browserpage, assumes it's on the view object.
         # chameleon/z3c.pt will use the kwargs
-
         options['context'] = context
-        # The ViewPageTemplate likes to have a request. We provide
-        # a new object so that it can have access to the context variables.
+
         return template(view, request=request, **options)
 
     def inject_directory(self, directory):
@@ -197,7 +215,7 @@ class ChameleonTemplates(TemplateSystem):
         # file. This doesn't deal with naming conflicts.
         gsm = component.getGlobalSiteManager()
         for macro_file in sorted(glob.glob(os.path.join(directory, "*.macro.pt"))):
-            template = ViewPageTemplateFileWithLoad(macro_file)
+            template = NikolaPageFileTemplate(macro_file)
             for name in template.macros.names:
                 factory = MacroFactory(macro_file, name, 'text/html')
                 if name in seen_macros:

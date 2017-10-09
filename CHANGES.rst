@@ -5,7 +5,10 @@
 0.0.1a2 (unreleased)
 ====================
 
-- Nothing changed yet.
+- Map the Nikola ``messages`` function onto the native ``i18n``
+  functionality of Chamleon. Attributes like ``i18n:translate`` are
+  now preferred to explicit calls to ``options/messages`` when
+  possible.
 
 
 0.0.1a1 (2017-10-09)
