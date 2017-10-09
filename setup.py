@@ -20,19 +20,16 @@ def _read(*fname):
 
 setup(
     name='nti.nikola_chameleon',
-    version='1.0.0a1.dev0',
+    version='0.0.1a1.dev0',
     author='Jason Madden',
     author_email='jason@nextthought.com',
     description="NTI Nikola Chameleon",
     long_description=(
         _read('README.rst')
         + '\n\n'
-        + '\n'.join('    ' + line for line in
-                    _read('src/nti/nikola_chameleon/nti.nikola_chameleon.plugin').splitlines())
-        + '\n\n'
         + _read('CHANGES.rst')),
     license='Apache',
-    keywords='nikola chameleon template',
+    keywords='nikola chameleon template blog static',
     classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',
@@ -72,7 +69,7 @@ setup(
         ],
     },
     # See the thread at https://github.com/pypa/pip/issues/2874#issuecomment-109429489
-    # for why we don't try do use data_files.
+    # for why we don't try to use data_files.
     #data_files=[
     #    ('nikola', ['nti.nikola_chameleon.plugin',]),
     #],
