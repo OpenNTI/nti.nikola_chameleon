@@ -35,6 +35,7 @@ from .request import Request
 from .interfaces import ITemplate
 from .template import NikolaPageFileTemplate
 from .template import TemplateFactory
+from .view import View
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -193,7 +194,7 @@ class ChameleonTemplates(TemplateSystem):
         interface.alsoProvides(request, interfaces.PAGEKINDS[pagekind])
 
     def new_view_for_context(self, context, request):
-        view = _View(self)
+        view = View(context, request, self)
         options = request.options
         if not interfaces.IPost.providedBy(context):
             # If it's not a post, it can't possibly have comments.
@@ -292,13 +293,3 @@ class ChameleonTemplates(TemplateSystem):
         if os.path.exists(theme_zcml):
             # Let any explicit directions take precedence.
             xmlconfig.file(theme_zcml, context=self._conf_context)
-
-
-class _View(object):
-    """
-    The view object we pass to templates. Exists merely to hold
-    marker interfaces.
-    """
-
-    def __init__(self, templates):
-        self.templates = templates

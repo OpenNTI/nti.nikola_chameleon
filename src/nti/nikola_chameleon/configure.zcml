@@ -28,5 +28,11 @@
         provides="zope.traversing.interfaces.IPathAdapter"
         name="meta"/>
 
+    <view for="*"
+          type="*"
+          factory=".view.PostTextView"
+          name="post_text"
+          />
+
 
 </configure>
