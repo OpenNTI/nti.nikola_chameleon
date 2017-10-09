@@ -2,7 +2,7 @@
  Changes
 =========
 
-0.0.1a1 (unreleased)
+0.0.1a1 (2017-10-09)
 ====================
 
 - Preliminary PyPI release. While this package is functional, it is

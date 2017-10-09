@@ -20,7 +20,7 @@ def _read(*fname):
 
 setup(
     name='nti.nikola_chameleon',
-    version='0.0.1a1.dev0',
+    version='0.0.1a1',
     author='Jason Madden',
     author_email='jason@nextthought.com',
     description="NTI Nikola Chameleon",
