@@ -108,6 +108,16 @@ class IMainIndexPageKind(IIndexPageKind):
     # 'index' and 'main_index' in pagkeind
     interface.taggedValue('__pagekinds__', (u'index', u'main_index'))
 
+class IArchiveIndexPageKind(IIndexPageKind,
+                            IArchivePageKind):
+    """
+    When archives are indexes.
+
+    ARCHIVES_ARE_INDEXES = True
+    """
+
+    interface.taggedValue('__pagekinds__', (u'index', u'archive_page'))
+
 class IPostPageKind(IPageKind):
     """A blog post"""
 
@@ -138,6 +148,9 @@ def _build(iface, result, tag='__pagekinds__', tx=lambda x: x):
     kinds = iface.getTaggedValue(tag)
     kinds = tx(kinds)
     if kinds in result and kinds: # pragma: no cover
+        if result[kinds] is iface:
+            # Multiple inheritance
+            return
         raise ValueError("Duplicate %s" % tag, kinds, iface)
 
     if kinds not in result:
