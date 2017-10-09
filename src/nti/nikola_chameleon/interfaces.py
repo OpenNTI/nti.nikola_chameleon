@@ -2,6 +2,18 @@
 """
 Interfaces for rendering Nikola with chameleon.
 
+The most important interface in this package for themes is
+:class:`IPageKind` and its various subclasses. These function
+similarly to `IBrowserLayer` in a Zope 3 application, in that they are
+applied to the ``request`` variable when a template is rendered, and
+more specific templates or macros can be registered for the request
+based on that layer. Each request will only have one such interface
+applied to it.
+
+
+Similarly, the :class:`ICommentKind` (with its subclasses
+:class:`ICommentKindNone` and :class:`ICommentKindAllowed` and *its*
+various system types markers will be applied to the ``view`` variable).
 """
 from __future__ import absolute_import
 from __future__ import division
@@ -17,7 +29,6 @@ class ITemplate(interface.Interface):
 
     def __call__(view, **kwargs):
         "Called to render."
-
 
 class IPost(interface.Interface):
     """
@@ -122,18 +133,64 @@ class IPostPage(IPost, IPageKind):
 
     interface.taggedValue('__pagekinds__', ())
 
-def _build(iface, result):
-    kinds = iface.getTaggedValue('__pagekinds__')
-    kinds = frozenset(kinds)
+def _build(iface, result, tag='__pagekinds__', tx=lambda x: x):
+    __traceback_info__ = iface, tag
+    kinds = iface.getTaggedValue(tag)
+    kinds = tx(kinds)
     if kinds in result and kinds: # pragma: no cover
-        raise ValueError("Duplicate pagkeinds", kinds, iface)
+        raise ValueError("Duplicate %s" % tag, kinds, iface)
 
     if kinds not in result:
         result[kinds] = iface
 
     for sub in iface.dependents.keys():
-        _build(sub, result)
+        _build(sub, result, tag, tx)
 
     return result
 
-PAGEKINDS = _build(IPageKind, {})
+
+PAGEKINDS = {}
+
+
+class ICommentKind(interface.Interface):
+    """
+    The type of comments for a given view.
+    """
+
+class ICommentKindNone(interface.Interface):
+    """
+    No comments are allowed on this view.
+    """
+
+class ICommentKindAllowed(interface.Interface):
+    """
+    Comments are allowed on this view.
+    """
+
+    interface.taggedValue('__comment_system__', None)
+
+class ICommentKindDisqus(ICommentKindAllowed):
+    """
+    Use disqus comments.
+    """
+    interface.taggedValue('__comment_system__', 'disqus')
+
+COMMENTSYSTEMS = {}
+
+
+def _cleanUp():
+    PAGEKINDS.clear()
+    PAGEKINDS.update(_build(IPageKind, {}, tx=frozenset))
+    COMMENTSYSTEMS.clear()
+    COMMENTSYSTEMS.update(_build(ICommentKindAllowed,
+                                 {}, '__comment_system__'))
+
+
+_cleanUp()
+
+try:
+    from zope.testing import cleanup
+except ImportError:
+    pass
+else:
+    cleanup.addCleanUp(_cleanUp)

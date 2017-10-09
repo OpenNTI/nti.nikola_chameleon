@@ -34,5 +34,11 @@ class NamedMacroView(object):
         self.request = request
 
     def traverse(self, name, ignored):
+        view = self.request.options['view']
+        templates = view.templates
         return BoundMacro(self.context,
-                          get_macro_template(self.context, None, self.request, name))
+                          get_macro_template(self.context,
+                                             templates.new_view_for_context(self.context,
+                                                                            self.request),
+                                             self.request,
+                                             name))

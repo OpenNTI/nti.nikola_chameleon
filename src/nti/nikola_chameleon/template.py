@@ -28,7 +28,8 @@ class NikolaPageFileTemplate(ViewPageTemplateFile):
     This does a few things:
 
     1. Sets up the ``load:`` expression to work.
-    2. Provides a ``translate`` function based on Nikola's
+    2. Restores the ``import:`` and ``structure:`` expression types.
+    3. Provides a ``translate`` function based on Nikola's
        ``messages`` dictionary that will enable Chameleon's default
        I18N support.
     """
@@ -68,6 +69,7 @@ class NikolaPageFileTemplate(ViewPageTemplateFile):
 
 BaseTemplate.expression_types['structure'] = PageTemplateFile.expression_types['structure']
 BaseTemplate.expression_types['load'] = PageTemplateFile.expression_types['load']
+BaseTemplate.expression_types['import'] = PageTemplateFile.expression_types['import']
 z3c.macro.zcml.ViewPageTemplateFile = NikolaPageFileTemplate
 zope.browserpage.simpleviewclass.ViewPageTemplateFile = NikolaPageFileTemplate
 
@@ -117,4 +119,7 @@ class MessagesTranslate(object):
 
     def __call__(self, msgid, domain=None, mapping=None, context=None,
                  target_language=None, default=None):
-        return self._messages(msgid, target_language)
+        try:
+            return self._messages(msgid, target_language)
+        except KeyError:
+            return default or msgid

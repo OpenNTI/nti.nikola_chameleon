@@ -151,8 +151,6 @@ class ChameleonTemplates(TemplateSystem):
 
         # context becomes the options dict.
         options = context
-        # self becomes view.
-        view = self
         # The post, if given, becomes the context.
         # Otherwise, it's a dummy object.
         context = options.get('post')
@@ -168,8 +166,10 @@ class ChameleonTemplates(TemplateSystem):
 
         request = Request(context, options)
         # apply the "layer" to the request
-        pagekind = frozenset(options.get('pagekind', ()))
-        interface.alsoProvides(request, interfaces.PAGEKINDS[pagekind])
+        self._apply_request_layer(request, options)
+
+        # Apply other markers to the view
+        view = self.new_view_for_context(context, request)
 
         template = component.getMultiAdapter((context, request),
                                              ITemplate,
@@ -180,8 +180,50 @@ class ChameleonTemplates(TemplateSystem):
         # zope.browserpage, assumes it's on the view object.
         # chameleon/z3c.pt will use the kwargs
         options['context'] = context
+        options['view'] = view
+
+        # When we render slides we don't get given messages.
+        if 'messages' not in options:
+            options['messages'] = self.site.MESSAGES
 
         return template(view, request=request, **options)
+
+    def _apply_request_layer(self, request, options):
+        pagekind = frozenset(options.get('pagekind', ()))
+        interface.alsoProvides(request, interfaces.PAGEKINDS[pagekind])
+
+    def new_view_for_context(self, context, request):
+        view = _View(self)
+        options = request.options
+        if not interfaces.IPost.providedBy(context):
+            # If it's not a post, it can't possibly have comments.
+            # XXX: When the context is not a post, as in when we're
+            # rendering an index page and we have options['posts']
+            # that the template will iterate over, like index.tmpl
+            # does, we have to traverse through the post to get a new
+            # view with this information before we look up the macro:
+            # post/@@macro/comment_link. Maybe the view isn't the best
+            # place to hang this? Maybe we should be traversing
+            # through posts here and applying this info to them? But still, that
+            # would require rebinding the context to the post in the same mechanism,
+            # so it doesn't make much difference.
+            interface.alsoProvides(view, interfaces.ICommentKindNone)
+        elif (
+                # comments enabled for the site?
+                options['site_has_comments']
+                # enabled for the page kind?
+                and options.get("enable_comments", True)
+                # NOT disabled for this specific post?
+                and not context.meta('nocomments')):
+            comment_system = options['comment_system']
+            # TODO: Make this extensible, allow plugins and themes to
+            # define their own comment systems.
+            iface = interfaces.COMMENTSYSTEMS[comment_system]
+            interface.alsoProvides(view, iface)
+        else:
+            # Things like galleries and pages that have comments disabled
+            interface.alsoProvides(view, interfaces.ICommentKindNone)
+        return view
 
     def inject_directory(self, directory):
         """Injects the directory with the lowest priority in the
@@ -250,3 +292,13 @@ class ChameleonTemplates(TemplateSystem):
         if os.path.exists(theme_zcml):
             # Let any explicit directions take precedence.
             xmlconfig.file(theme_zcml, context=self._conf_context)
+
+
+class _View(object):
+    """
+    The view object we pass to templates. Exists merely to hold
+    marker interfaces.
+    """
+
+    def __init__(self, templates):
+        self.templates = templates
