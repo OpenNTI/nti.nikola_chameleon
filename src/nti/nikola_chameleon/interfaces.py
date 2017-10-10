@@ -207,13 +207,26 @@ class IHtmlHeadViewletManager(IViewletManager):
 
 class IHtmlBodyContentViewletManager(IViewletManager):
     """
-    A viewlet that operates within the main content of the body.
+    A viewlet that operates anywhere within the main content of the
+    body.
     """
 
 class IHtmlBodyContentHeaderViewletManager(IViewletManager):
     """
     A viewlet that operates within a header in the main content
-    of the body.
+    of the body (before the main content).
+    """
+
+class IHtmlBodyContentFooterViewletManager(IViewletManager):
+    """
+    A viewlet that operates within a footer in the main content
+    of the body (after the main content).
+    """
+
+class IHtmlBodyFooterViewletManager(IViewletManager):
+    """
+    A viewlet that operates after the main body content, near the very end of
+    the html <body> tag.
     """
 
 def _cleanUp():
