@@ -13,9 +13,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from zope import interface
+from zope.publisher.interfaces.browser import IBrowserView
 
 logger = __import__('logging').getLogger(__name__)
 
+@interface.implementer(IBrowserView)
 class BaseView(object):
     """
     All views provide the ``context`` and ``request`` attributes.

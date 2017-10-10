@@ -12,10 +12,26 @@
 	<include package="zope.browserpage" />
 	<include package="zope.browserpage" file="meta.zcml" />
 
+    <include package="z3c.macro" file="meta.zcml" />
+    <include package="z3c.template" file="meta.zcml" />
+    <include package="zope.viewlet" file="meta.zcml" />
+
 	<include package="z3c.ptcompat" />
 	<include package="z3c.pt" />
 
 	<include package="z3c.macro" />
+
+    <!-- configure the viewlet (doesn't currently actually do anything)-->
+    <include package="zope.viewlet" />
+
+    <!--
+        configure the content provider provider: expression type for tales.
+
+        Technically this is not needed while we explicitly instantiate
+        z3c.pt Template objects, as 'provider:' is an expression type it
+        makes sure the compiler understands.
+    -->
+    <include package="zope.contentprovider" />
 
     <!-- An @@macros view for binding macros to a context -->
     <adapter for="* *"

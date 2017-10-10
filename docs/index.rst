@@ -1,8 +1,11 @@
 .. include:: ../README.rst
 
+Once you have successfully installed the project, proceed to :doc:`narr`.
+
 .. toctree::
    :maxdepth: 2
 
+   narr
    api
    changelog
 

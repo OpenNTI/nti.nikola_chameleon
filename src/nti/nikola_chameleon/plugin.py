@@ -20,6 +20,7 @@ from z3c.macro.interfaces import IMacroTemplate
 
 from z3c.macro.zcml import MacroFactory
 
+from z3c.template.interfaces import IContentTemplate
 
 from zope import component
 from zope import interface
@@ -32,7 +33,7 @@ from zope.dottedname import resolve as dottedname
 import nti.nikola_chameleon
 from nti.nikola_chameleon import interfaces
 from .request import Request
-from .interfaces import ITemplate
+
 from .template import NikolaPageFileTemplate
 from .template import TemplateFactory
 from .view import View
@@ -44,6 +45,17 @@ class Context(object):
     Instances of this object will be the context
     of a template when no post is available.
     """
+
+def getViewTemplate(name, view, request, context):
+    template = component.queryMultiAdapter(
+        (view, request, context),
+        IContentTemplate, name=name)
+    if template is None:
+        template = component.getMultiAdapter(
+            (view, request),
+            IContentTemplate, name=name)
+
+    return template
 
 class ChameleonTemplates(TemplateSystem):
 
@@ -116,8 +128,8 @@ class ChameleonTemplates(TemplateSystem):
         # kind of context we have, if that's customized in theme.zcml.
         self._provide_templates()
         try:
-            template = component.getMultiAdapter((object(), object()),
-                                                 ITemplate,
+            template = component.getMultiAdapter((object(), object(), object()),
+                                                 IContentTemplate,
                                                  name=template_name)
         except LookupError:
             return []
@@ -172,9 +184,7 @@ class ChameleonTemplates(TemplateSystem):
         # Apply other markers to the view
         view = self.new_view_for_context(context, request)
 
-        template = component.getMultiAdapter((context, request),
-                                             ITemplate,
-                                             name=template)
+        template = getViewTemplate(template, view, request, context)
 
 
         # Make the context available.
@@ -276,11 +286,14 @@ class ChameleonTemplates(TemplateSystem):
 
             name = os.path.basename(template_file)
             name = name[:-len(".pt")]
-            factory = TemplateFactory(template_file)
+            factory = TemplateFactory(template_file, 'text/html')
             # Register them as template adapters for us.
+            # required = (view, request, context)
             gsm.registerAdapter(factory,
-                                provided=(ITemplate),
-                                required=(interface.Interface, interface.Interface),
+                                provided=(IContentTemplate),
+                                required=(interface.Interface,
+                                          interface.Interface,
+                                          interface.Interface),
                                 name=name)
 
             # Register them as views for traversing

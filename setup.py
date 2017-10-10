@@ -54,10 +54,12 @@ setup(
         'Chameleon',
         'z3c.pt',
         'z3c.macro',
+        'z3c.template',
         'z3c.ptcompat',
         'zope.browserpage',
         'zope.interface',
         'zope.dottedname',
+        'zope.viewlet',
         'nikola >= 7.8',
     ],
     extras_require={

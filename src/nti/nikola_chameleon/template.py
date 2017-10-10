@@ -11,11 +11,14 @@ from chameleon.zpt.template import PageTemplateFile
 import z3c.macro.zcml
 from z3c.pt.pagetemplate import ViewPageTemplateFile
 from z3c.pt.pagetemplate import BaseTemplate
+import z3c.template.template
 import z3c.pt.namespaces
 import zope.pagetemplate.engine
 import zope.browserpage.simpleviewclass
 import zope.browserpage.viewpagetemplatefile
 import zope.pagetemplate.pagetemplatefile
+import zope.viewlet.viewlet
+import zope.viewlet.manager
 
 from nikola.utils import LocaleBorg
 
@@ -40,6 +43,17 @@ class NikolaPageFileTemplate(ViewPageTemplateFile):
     # of import, we may or may not get that change.
     # So we do the bad thing too and modify the superclass also
 
+    def __init__(self, template_file, path=None, **kwargs):
+        if isinstance(path, dict):
+            # zope code sent in 'offering' as a positional
+            # argument, and it's some module dictionary or something
+            # else useless because we specify template_file as absolute
+            # paths (its designed to let you use package:file.pt notation,
+            # I think)
+            path = None
+        super(NikolaPageFileTemplate, self).__init__(template_file, path=path, **kwargs)
+
+
     @property
     def builtins(self):
         d = super(NikolaPageFileTemplate, self).builtins
@@ -50,6 +64,17 @@ class NikolaPageFileTemplate(ViewPageTemplateFile):
         context = super(NikolaPageFileTemplate, self)._pt_get_context(
             instance, request, kwargs)
         # Set up translation
+        if 'messages' not in kwargs:
+            assert context['options'] is kwargs
+            # We are being called by a content provider or viewlet,
+            # not directly from ChameleonTemplates. Therefore we need
+            # to install the extra options again, being careful not to
+            # overwrite what was passed in
+            orig_options = context['request'].options
+            for k, v in orig_options.items():
+                if k not in kwargs:
+                    kwargs[k] = v
+
         context['translate'] = MessagesTranslate(kwargs['messages'])
         return context
 
@@ -70,15 +95,20 @@ class NikolaPageFileTemplate(ViewPageTemplateFile):
 BaseTemplate.expression_types['structure'] = PageTemplateFile.expression_types['structure']
 BaseTemplate.expression_types['load'] = PageTemplateFile.expression_types['load']
 BaseTemplate.expression_types['import'] = PageTemplateFile.expression_types['import']
-z3c.macro.zcml.ViewPageTemplateFile = NikolaPageFileTemplate
 zope.browserpage.simpleviewclass.ViewPageTemplateFile = NikolaPageFileTemplate
+zope.viewlet.viewlet.ViewPageTemplateFile = NikolaPageFileTemplate
+zope.viewlet.manager.ViewPageTemplateFile = NikolaPageFileTemplate
+
+z3c.macro.zcml.ViewPageTemplateFile = NikolaPageFileTemplate
+z3c.template.template.ViewPageTemplateFile = NikolaPageFileTemplate
 
 
-class TemplateFactory(object):
+class TemplateFactory(z3c.template.template.TemplateFactory):
 
-    def __init__(self, path):
-        self.path = path
-        # This object is known as "template" while the .pt
+    def __init__(self, path, contentType, macro=None):
+        self.path = path # Save this.
+        super(TemplateFactory, self).__init__(path, contentType, macro)
+        # self.template is known as "template" while the .pt
         # is running. We don't add anything to its dict to
         # allow us to share it, thus cutting down on the
         # running time.
@@ -86,8 +116,7 @@ class TemplateFactory(object):
         #self.template = zope.browserpage.viewpagetemplatefile.ViewPageTemplateFile(self.path)
         self.template = NikolaPageFileTemplate(self.path)
 
-    def __call__(self, context, request):
-        return self.template
+z3c.template.template.TemplateFactory = TemplateFactory
 
 # We also fix the namespaces in z3c.pt.namespaces to use the
 # real namespace object.

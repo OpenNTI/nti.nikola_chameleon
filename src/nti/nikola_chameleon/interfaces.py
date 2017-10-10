@@ -21,14 +21,7 @@ from __future__ import print_function
 
 from nikola.post import Post
 from zope import interface
-
-class ITemplate(interface.Interface):
-    """
-    A template.
-    """
-
-    def __call__(view, **kwargs):
-        "Called to render."
+from zope.viewlet.interfaces import IViewletManager
 
 class IPost(interface.Interface):
     """
@@ -190,6 +183,22 @@ class ICommentKindDisqus(ICommentKindAllowed):
 
 COMMENTSYSTEMS = {}
 
+
+###
+# Viewlet managers. We can't specify a specific viewlet manager type
+# for every possible part of the page, but we can specify some common ones.
+# This should help avoid name clashes.
+###
+
+class IHtmlHeadViewletManager(IViewletManager):
+    """
+    A viewlet manager meant to be used in the <head>.
+    """
+
+class IHtmlBodyContentViewletManager(IViewletManager):
+    """
+    A viewlet that operates within the main content of the body.
+    """
 
 def _cleanUp():
     PAGEKINDS.clear()

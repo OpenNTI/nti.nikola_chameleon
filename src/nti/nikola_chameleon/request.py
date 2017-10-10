@@ -11,7 +11,9 @@ from __future__ import print_function
 
 from z3c.pt.pagetemplate import ViewPageTemplate
 from zope import interface
-from zope.publisher.interfaces import IRequest
+
+from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -20,7 +22,7 @@ class Response(object):
     def getHeader(self, name): # response
         return 'text/html'
 
-@interface.implementer(IRequest)
+@interface.implementer(IDefaultBrowserLayer)
 class Request(object):
     # Minimum request-like object to use when rendering
     # We claim to implement zope.publisher's IRequest in order to
