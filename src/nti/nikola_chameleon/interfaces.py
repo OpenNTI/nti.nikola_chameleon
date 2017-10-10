@@ -127,7 +127,17 @@ class IStoryPageKind(IPagePageKind):
     """A story page"""
 
     # 'story_page' and 'page_page' in pagekind
-    interface.taggedValue('__pagekinds__', (u'page_page', 'story_page',))
+    interface.taggedValue('__pagekinds__', (u'page_page', u'story_page',))
+
+class IBookPageKind(IStoryPageKind):
+    """
+    A book page. Note that this doesn't actually have
+    its own pagekinds value, it's specified by
+    setting 'template:book.tmpl' in the post metadata.
+    """
+    interface.taggedValue('__pagekinds__', (u'page_page',
+                                            u'story_page',
+                                            u'book_page'))
 
 class IPostPage(IPost, IPageKind):
     """
@@ -198,6 +208,12 @@ class IHtmlHeadViewletManager(IViewletManager):
 class IHtmlBodyContentViewletManager(IViewletManager):
     """
     A viewlet that operates within the main content of the body.
+    """
+
+class IHtmlBodyContentHeaderViewletManager(IViewletManager):
+    """
+    A viewlet that operates within a header in the main content
+    of the body.
     """
 
 def _cleanUp():

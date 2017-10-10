@@ -44,6 +44,13 @@
         provides="zope.traversing.interfaces.IPathAdapter"
         name="meta"/>
 
+
+    <adapter
+        for=".interfaces.IPost"
+        factory=".adapters.FormattedDatePathAdapter"
+        provides="zope.traversing.interfaces.IPathAdapter"
+        name="formatted_date"/>
+
     <view for="*"
           type="*"
           factory=".view.PostTextView"

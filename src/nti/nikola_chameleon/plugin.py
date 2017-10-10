@@ -179,7 +179,7 @@ class ChameleonTemplates(TemplateSystem):
 
         request = Request(context, options)
         # apply the "layer" to the request
-        self._apply_request_layer(request, options)
+        self._apply_request_layer(request, options, template)
 
         # Apply other markers to the view
         view = self.new_view_for_context(context, request)
@@ -199,9 +199,12 @@ class ChameleonTemplates(TemplateSystem):
 
         return template(view, request=request, **options)
 
-    def _apply_request_layer(self, request, options):
+    def _apply_request_layer(self, request, options, template):
         pagekind = frozenset(options.get('pagekind', ()))
         interface.alsoProvides(request, interfaces.PAGEKINDS[pagekind])
+        if template == 'book.tmpl':
+            # Special support for the book pseudo-kind
+            interface.alsoProvides(request, interfaces.IBookPageKind)
 
     def new_view_for_context(self, context, request):
         view = View(context, request, self)

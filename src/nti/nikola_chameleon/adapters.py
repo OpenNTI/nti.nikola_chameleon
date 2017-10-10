@@ -29,3 +29,20 @@ class MetaPathAdapter(object):
 
     def traverse(self, name, furtherPath):
         return self.context.meta(name)
+
+
+@interface.implementer(IPathAdapter, ITraversable)
+@component.adapter(IPost)
+class FormattedDatePathAdapter(object):
+    """
+    Lets us access the formatted date function
+    in tales expressions
+
+    post/formatted_date:webiso post/formatted_date:?date_format
+    """
+
+    def __init__(self, context):
+        self.context = context
+
+    def traverse(self, name, furtherPath):
+        return self.context.formatted_date(name)
