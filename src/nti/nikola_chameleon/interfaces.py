@@ -47,25 +47,30 @@ class IListPageKind(IPageKind):
     # 'list' in pagekind
     interface.taggedValue('__pagekinds__', (u'list',))
 
-class IAuthorsPageKind(IListPageKind):
+# It turns out inheriting from IListPageKind is not a good idea,
+# there are some pages that are *just* lists and nothing else, and
+# if we try to register for them we pick up all the subclasses.
+# Archives are the one exception.
+
+class IAuthorsPageKind(IPageKind):
     "The page for listing authors"
 
     # 'list' and 'authors_page' in pagekind
     interface.taggedValue('__pagekinds__', (u'list', u'authors_page'))
 
-class IAuthorPageKind(IListPageKind):
+class IAuthorPageKind(IPageKind):
     "The page for listing an author"
 
     # 'list' and 'author_page' in pagkeind
     interface.taggedValue('__pagekinds__', (u'list', u'author_page'))
 
-class ITagsPageKind(IListPageKind):
+class ITagsPageKind(IPageKind):
     "The page for listing tags"
 
     # 'list' and 'tags_page' in pagekind
     interface.taggedValue('__pagekinds__', (u'list', u'tags_page'))
 
-class ITagPageKind(IListPageKind):
+class ITagPageKind(IPageKind):
     """The page for listing a tag"""
 
     # 'list' and 'tag_page' in pagkeind
