@@ -15,8 +15,8 @@ from __future__ import print_function
 
 from zope import interface
 from zope.publisher.interfaces.browser import IBrowserView
+from zope.viewlet.manager import ConditionalViewletManager as ZConditionalViewletManager
 
-logger = __import__('logging').getLogger(__name__)
 
 @interface.implementer(IBrowserView)
 class BaseView(object):
@@ -83,3 +83,6 @@ class PostTextView(BaseView):
         The string 'post-preview' if the content is a teaser.
         """
         return 'post-preview' if self.teaser else ''
+
+class ConditionalViewletManager(ZConditionalViewletManager):
+    pass

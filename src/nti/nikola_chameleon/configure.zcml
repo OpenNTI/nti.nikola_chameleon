@@ -57,5 +57,9 @@
           name="post_text"
           />
 
+    <view for="*"
+          type="*"
+          factory=".feeds.Feeds"
+          name="feeds" />
 
 </configure>
