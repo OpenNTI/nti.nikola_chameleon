@@ -4,6 +4,14 @@
 
 .. todo:: Write ZCA section
 
+Background
+==========
+
+If you're not familiar with component architectures, and
+``zope.component`` in particular, please take a few minutes to read
+:doc:`zca_background`.
+
+
 Theory of Operation
 ===================
 

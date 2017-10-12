@@ -12,6 +12,7 @@ package works, see :doc:`using_zca`.
 
    getting_started
    first_theme
+   zca_background
    using_zca
    macros
    viewlets
