@@ -13,7 +13,7 @@ applied to it.
 
 Similarly, the :class:`ICommentKind` (with its subclasses
 :class:`ICommentKindNone` and :class:`ICommentKindAllowed` and *its*
-various system types markers will be applied to the ``view`` variable).
+various system types markers) will be applied to the ``view`` variable.
 """
 from __future__ import absolute_import
 from __future__ import division

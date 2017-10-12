@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-The Chameleon ZPT plugin for nikola.
+Request objects.
 
 """
 from __future__ import absolute_import

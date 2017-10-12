@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-The Chameleon ZPT plugin for nikola.
+Supporting code for z3c.macro.
 
 """
 from __future__ import absolute_import
@@ -28,6 +28,15 @@ class BoundMacro(object):
 
 @interface.implementer(ITraversable)
 class NamedMacroView(object):
+    """
+    Provides a generic ``@@macros`` view for finding a z3c.macro registration
+    on a context *different* than the current context.
+
+    The object that it was traversed from will become the ``context`` variable
+    during executing of the macro. E.g., in ``metal:use-macro="post/@@macros/a_macro"``, the
+    registered macro ``a_macro`` will be looked up with ``post`` as its context and will
+    execute with ``post`` as its ``context`` variable.
+    """
 
     def __init__(self, context, request):
         self.context = context

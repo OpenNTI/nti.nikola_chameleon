@@ -16,3 +16,33 @@ Templating
 ==========
 
 .. automodule:: nti.nikola_chameleon.template
+
+Adapters
+========
+
+.. automodule:: nti.nikola_chameleon.adapters
+
+Feeds
+=====
+
+.. automodule:: nti.nikola_chameleon.feeds
+
+Macros
+======
+
+.. automodule:: nti.nikola_chameleon.macro
+
+Request
+=======
+
+.. automodule:: nti.nikola_chameleon.request
+
+
+View
+====
+.. automodule:: nti.nikola_chameleon.view
+
+ZCML
+====
+
+.. automodule:: nti.nikola_chameleon.zcml

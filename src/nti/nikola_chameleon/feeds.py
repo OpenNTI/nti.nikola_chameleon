@@ -110,8 +110,19 @@ class HTMLFeedLinkViewlet(ViewletBase):
     """
     A viewlet to render one or more feed links into html.
 
-    You must subclass this to set the name of the classification attribute to
-    find in the request options dictionary in the ``classification_name`` attribute.
+    You must subclass this to set the name of the classification
+    attribute to find in the request options dictionary in the
+    ``classification_name`` attribute. This is usually done in ZCML::
+
+       <browser:viewlet
+          name="feed_content_header"
+          manager=".interfaces.IHtmlBodyContentHeaderViewletManager"
+          class=".feeds.HTMLFeedLinkViewlet"
+          layer=".interfaces.IAuthorPageKind"
+          permission="zope.Public"
+          weight="1"
+          classification_name="author"
+          />
     """
     available = True
     classification_name = None

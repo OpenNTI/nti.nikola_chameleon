@@ -5,6 +5,7 @@
 
 	<include package="zope.component" file="meta.zcml" />
 	<include package="zope.component" />
+    <include package="nti.nikola_chameleon" file="meta.zcml" />
 	<!-- required by zope.browserpage -->
 	<include package="zope.security" file="meta.zcml" />
 

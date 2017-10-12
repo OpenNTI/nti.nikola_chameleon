@@ -21,7 +21,7 @@ class MetaPathAdapter(object):
     Lets us access the meta object in path
     expressions.
 
-    post/meta:link post/meta:keywords
+    ``post/meta:link`` ``post/meta:keywords``
     """
 
     def __init__(self, context):
@@ -36,9 +36,11 @@ class MetaPathAdapter(object):
 class FormattedDatePathAdapter(object):
     """
     Lets us access the formatted date function
-    in tales expressions
+    in tales expressions.
 
-    post/formatted_date:webiso post/formatted_date:?date_format
+    ``post/formatted_date:webiso`` ``post/formatted_date:?date_format``
+
+    .. versionadded:: 0.0.1a2
     """
 
     def __init__(self, context):

@@ -51,6 +51,8 @@ class View(BaseView):
 class PostTextView(BaseView):
     """
     For getting the text of a post, while respecting teasers.
+
+    .. versionadded:: 0.0.1a2
     """
 
     @property
@@ -85,4 +87,7 @@ class PostTextView(BaseView):
         return 'post-preview' if self.teaser else ''
 
 class ConditionalViewletManager(ZConditionalViewletManager):
-    pass
+    """
+    A viewlet manager that respects the ``weight`` and ``available``
+    attributes.
+    """

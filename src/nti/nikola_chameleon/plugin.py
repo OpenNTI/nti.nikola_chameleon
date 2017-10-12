@@ -207,6 +207,9 @@ class ChameleonTemplates(TemplateSystem):
             interface.alsoProvides(request, interfaces.IBookPageKind)
 
     def new_view_for_context(self, context, request):
+        # XXX: These are really layers that should be on the
+        # request, not the view. The view should have more of a relationship
+        # to the template being requested?
         view = View(context, request, self)
         options = request.options
         if not interfaces.IPost.providedBy(context):
