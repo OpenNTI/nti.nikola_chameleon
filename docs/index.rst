@@ -1,10 +1,13 @@
 .. include:: ../README.rst
 
-Once you have successfully installed the project, proceed to :doc:`narr`.
+Once you have successfully installed the project, proceed to
+:doc:`first_theme`. For a more complete understanding of how this
+package works, see :doc:`narr`.
 
 .. toctree::
    :maxdepth: 2
 
+   first_theme
    narr
    api
    changelog
