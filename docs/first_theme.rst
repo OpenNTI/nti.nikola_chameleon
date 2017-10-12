@@ -1,24 +1,13 @@
-==============================
- Getting Started With A Theme
-==============================
+==================
+ Creating a Theme
+==================
 
 .. highlight:: html
 
 Creating a theme proceeds as `documented in the Nikola reference
 <https://getnikola.com/theming.html#>`_. This document will focus on
-the template features that nti.nikola_chameleon provides.
-
-.. note:: As you'll see in the examples below, the `template variables
-          Nikola defines
-          <https://getnikola.com/template-variables.html>`_ are made
-          available in the ``options`` dictionary, one of `the
-          standard names
-          <https://docs.zope.org/zope2/zope2book/AppendixC.html#built-in-names>`_
-          available to page templates. The ``context`` standard name
-          is often a Nikola post object (depending on the specific template).
-
-.. The above should probably be elsewhere, in a different type of
-   "getting started" document. That doc should talk about traversal.
+the template features that nti.nikola_chameleon provides. Make sure
+you've read :doc:`getting_started` before reading this.
 
 Your theme should be laid out according to the Nikola documentation..
 The only directory that nti.nikola_chameleon is interested in is your
@@ -80,7 +69,7 @@ expression type is available, the traversal based mechanism is much
 more flexible because it allows themes that extend yours to provide a
 new ``base.tmpl`` view. It is also useful to provide different macros
 depending on the ``context`` object (or whatever objects you traverse
-through). For more on that, see :doc:`narr` and :ref:`zcml`.
+through). For more on that, see :doc:`using_zca` and :ref:`zcml`.
 
 Macros
 ======
@@ -148,7 +137,7 @@ type::
 However, as with templates, the use of the ``macro:`` expression type
 allows themes to extend us and replace that macro with their own
 version, and it allows us to produce macros that do different things
-depending on context. For more on that, see :doc:`narr` and :ref:`zcml`.
+depending on context. For more on that, see :doc:`using_zca` and :ref:`zcml`.
 
 
 .. caution:: If you implement a macro of the same name in two
