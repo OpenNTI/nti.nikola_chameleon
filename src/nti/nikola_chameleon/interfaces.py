@@ -21,6 +21,7 @@ from __future__ import print_function
 
 from nikola.post import Post
 from zope import interface
+from zope.interface.common.sequence import IReadSequence
 from zope.viewlet.interfaces import IViewletManager
 
 class IPost(interface.Interface):
@@ -29,6 +30,43 @@ class IPost(interface.Interface):
     """
 
 interface.classImplements(Post, IPost)
+
+class IPostList(IReadSequence):
+    """
+    A list of posts.
+    """
+
+class IListing(interface.Interface):
+    """
+    A listing object.
+    """
+
+    code = interface.Attribute("The  formatted HTML code.")
+    crumbs = interface.Attribute("Breadcrum list")
+    folders = interface.Attribute("List of folders")
+    files = interface.Attribute("List of files")
+    source_link = interface.Attribute("Link to the source file")
+
+class IGallery(interface.Interface):
+    """
+    A gallery object.
+    """
+
+    crumbs = interface.Attribute("Breadcrumbs")
+    enable_comments = interface.Attribute("Whether comments are enabled.")
+    folders = interface.Attribute("List of folders (path, title)")
+    permalink = interface.Attribute("Permalink")
+    photo_array = interface.Attribute("List Photo array (contains dicts with image data: url, url_thumb, title, size{w, h}) ")
+    post = interface.Attribute("Optionally the post for this gallery")
+    thumbnail_size = interface.Attribute("THUMBNAIL_SIZE setting")
+
+class ISlide(interface.Interface):
+    """
+    A slide page.
+    """
+
+    carousel_id = interface.Attribute("The string id")
+    slides_content = interface.Attribute("A list of strings of image paths")
 
 class IPageKind(interface.Interface):
     """

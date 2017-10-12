@@ -29,6 +29,7 @@ from zope.browserpage.simpleviewclass import SimpleViewClass
 
 from zope.configuration import xmlconfig
 from zope.dottedname import resolve as dottedname
+from zope.proxy.decorator import SpecificationDecoratorBase
 
 import nti.nikola_chameleon
 from nti.nikola_chameleon import interfaces
@@ -40,11 +41,41 @@ from .view import View
 
 logger = __import__('logging').getLogger(__name__)
 
-class Context(object):
+class _Context(object):
     """
     Instances of this object will be the context
     of a template when no post is available.
     """
+
+@interface.implementer(interfaces.IPostList)
+class _PostListContext(SpecificationDecoratorBase):
+    """
+    A list of posts as the context.
+    """
+
+class _OptionsProxy(object):
+
+    _properties = ()
+
+    def __init__(self, options):
+        self.options = options
+
+    def __getattr__(self, name):
+        if name not in self._properties:
+            raise AttributeError(name)
+        return self.options[name]
+
+@interface.implementer(interfaces.IListing)
+class _ListingContext(_OptionsProxy):
+    _properties = tuple(interfaces.IListing.names())
+
+@interface.implementer(interfaces.IGallery)
+class _GalleryContext(_OptionsProxy):
+    _properties = tuple(interfaces.IGallery.names())
+
+@interface.implementer(interfaces.ISlide)
+class _SlideContext(_OptionsProxy):
+    _properties = tuple(interfaces.ISlide.names())
 
 def getViewTemplate(name, view, request, context):
     template = component.queryMultiAdapter(
@@ -169,13 +200,30 @@ class ChameleonTemplates(TemplateSystem):
         context = options.get('post')
 
         if context is not None:
-            # We only render these things once in a given run,
-            # so we don't bother stripping the interfaces off of it
-            # or using a proxy.
-            assert not interfaces.IPageKind.providedBy(context)
-            interface.alsoProvides(context, interfaces.IPostPage)
+            if template == 'gallery.tmpl':
+                # Some galleries can have posts
+                context = _GalleryContext(options)
+            else:
+                # We only render these things once in a given run,
+                # so we don't bother stripping the interfaces off of it
+                # or using a proxy.
+                assert not interfaces.IPageKind.providedBy(context)
+                interface.alsoProvides(context, interfaces.IPostPage)
+                # XXX: Need to look at the post's `type` and add that to the
+                # post https://getnikola.com/handbook.html#post-types
+        elif 'posts' in options:
+            context = _PostListContext(options['posts'])
+        elif 'code' in options and template == 'listing.tmpl':
+            context = _ListingContext(options)
+        elif template == 'gallery.tmpl':
+            context = _GalleryContext(options)
+        elif template == 'slides.tmpl':
+            context = _SlideContext(options)
         else:
-            context = Context()
+            # We shouldn't get here.
+            logger.warn("Unknown context type for template %r and options %r",
+                        template, list(options))
+            context = _Context()
 
         request = Request(context, options)
         # apply the "layer" to the request
