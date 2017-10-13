@@ -84,16 +84,20 @@ language (because the class is a factory, this is called
 
     >>> from zope.interface import implementer
 
+    >>> class SensibleRepr(object):
+    ...     def __repr__(self):
+    ...        return '<%s>' % (type(self).__name__)
+
     >>> @implementer(IGermanSpeaker)
-    ... class GermanDiplomat(object):
+    ... class GermanDiplomat(SensibleRepr):
     ...    """The German diplomat speaks German."""
 
     >>> @implementer(ISpanishSpeaker)
-    ... class SpanishDiplomat(object):
+    ... class SpanishDiplomat(SensibleRepr):
     ...    """The Spanish diplomat speaks Spanish."""
 
     >>> @implementer(IFrenchSpeaker)
-    ... class FrenchDiplomat(object):
+    ... class FrenchDiplomat(SensibleRepr):
     ...    """The French diplomat speaks French."""
 
     >>> french_diplomat = FrenchDiplomat()
@@ -179,8 +183,10 @@ inherently secure:
    ...              IGermanSpeaker,
    ...              IFrenchSpeaker)
    ... class ComputerTranslator(object):
-   ...    def __init__(self, person_a, person_b):
-   ...        pass
+   ...    def __init__(self, *args):
+   ...        self.a, self.b = args
+   ...    def __repr__(self):
+   ...        return '<ComputerTranslator for %r %r>' %(self.a, self.b)
 
 (The computer might want to know exactly who it is translating
 for---maybe to adapt to regional dialects---so we'll let it have
@@ -201,7 +207,7 @@ The diplomats can now have a secure conversation:
 .. doctest::
 
     >>> component.getMultiAdapter((spanish_diplomat, german_diplomat), ISecureLanguageTranslator)
-    <ComputerTranslator ...>
+    <ComputerTranslator for <SpanishDiplomat> <GermanDiplomat>>
 
 Steve only speaks Spanish and German, but what if the Spanish and
 French speakers want to have a (non-secure) conversation about their home town
@@ -210,7 +216,7 @@ football teams? Steve can't do it. Can anyone?
 .. doctest::
 
     >>> component.getMultiAdapter((spanish_diplomat, french_diplomat), ILanguageTranslator)
-    <ComputerTranslator ...
+    <ComputerTranslator for <SpanishDiplomat> <FrenchDiplomat>>
 
 The computer can! Because ``ISecureLanguageTranslator`` extends
 ``ILanguageTranslator``, when we ask for the latter, the registry is
