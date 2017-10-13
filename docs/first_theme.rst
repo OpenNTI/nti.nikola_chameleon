@@ -9,7 +9,10 @@ Creating a theme proceeds as `documented in the Nikola reference
 the template features that nti.nikola_chameleon provides. Make sure
 you've read :doc:`getting_started` before reading this.
 
-Your theme should be laid out according to the Nikola documentation..
+Your theme should be laid out according to the Nikola documentation.
+You'll need to specify ``nti.nikola_chameleon`` as the ``engine`` in
+your theme meta file.
+
 The only directory that nti.nikola_chameleon is interested in is your
 ``templates/`` folder.
 

@@ -112,10 +112,13 @@ Component Lookup
 ================
 
 Now that we know about the three key objects, we can talk about
-exactly why they are so key and how they are used. (In short, they are
+exactly why they are so key and how they are used. In short, they are
 used for component lookup through the system, and it is this layer of
 indirection that permits us flexibility and allows for easy
-:doc:`inheritance`.)
+:doc:`inheritance`. Or to put it more pragmatically, they allow us to
+*declaratively configure* how templates are composed and used, instead
+of creating a `mess of spaghetti code
+<https://getnikola.com/theming.html#identifying-and-customizing-different-kinds-of-pages-with-a-shared-template>`_.
 
 Throughout, we will use the example of Nikola rendering a page (not a
 blog post) in a system that has Disqus comments enabled.

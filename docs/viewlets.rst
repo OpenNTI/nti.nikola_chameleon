@@ -30,7 +30,11 @@ Viewlet Managers and the ``provider:`` Expression
 =================================================
 
 We'll jump right in with an example from the ``base-chameleon`` theme.
-First, here is a (simplified) template called ``generic_post_list.pt``::
+First, here is a (simplified) template called
+``generic_post_list.pt``:
+
+.. code-block:: xml
+   :emphasize-lines: 5
 
     <html xmlns:tal="http://xml.zope.org/namespaces/tal"
           xmlns:metal="http://xml.zope.org/namespaces/metal">
@@ -60,9 +64,12 @@ attribute (if one exists) set to a false value.
 
 So that's the first step in using viewlets (after deciding where in
 the template viewlets might be useful, of course): define your viewlet
-manager. This is done in ZCML::
+manager. This is done in ZCML:
 
-  <configure xmlns="http://namespaces.zope.org/zope"
+.. code-block:: xml
+   :emphasize-lines: 10,11
+
+   <configure xmlns="http://namespaces.zope.org/zope"
              xmlns:i18n="http://namespaces.zope.org/i18n"
              xmlns:zcml="http://namespaces.zope.org/zcml"
              xmlns:z3c="http://namespaces.zope.org/z3c"
@@ -145,9 +152,12 @@ Now that we have a viewlet manager, we can add individual viewlets to
 it. For our purposes, a viewlet is a template that gets run to fill in
 a piece of content for its viewlet manager. Recall that viewlets are
 associated with viewlet manager via the viewlet manager's kind, or interface.
-Again, this is done in ZCML::
+Again, this is done in ZCML:
 
-  <configure xmlns="http://namespaces.zope.org/zope"
+.. code-block:: xml
+   :emphasize-lines: 11,12,13,20,21,22
+
+   <configure xmlns="http://namespaces.zope.org/zope"
              xmlns:i18n="http://namespaces.zope.org/i18n"
              xmlns:zcml="http://namespaces.zope.org/zcml"
              xmlns:z3c="http://namespaces.zope.org/z3c"
@@ -189,9 +199,12 @@ Passing Parameters
 
 Notice that they both use the same ``template`` argument. And what's
 that ``article_class`` attribute for? Let's take a look at that
-template file, ``v_generic_article_post_list.pt``::
+template file, ``v_generic_article_post_list.pt``:
 
-  <article class="${view/article_class}"
+.. code-block:: xml
+   :emphasize-lines: 1
+
+    <article class="${view/article_class}"
            xmlns:tal="http://xml.zope.org/namespaces/tal"
 	       xmlns:metal="http://xml.zope.org/namespaces/metal">
       <header>
@@ -201,7 +214,7 @@ template file, ``v_generic_article_post_list.pt``::
       <ul metal:use-macro="macro:html_posts_postlist">
           <li>A post</li>
       </ul>
-  </article>
+    </article>
 
 It turns out that all the extra attributes you specify in ZCML get
 turned into attributes on the ``view`` object when the viewlet runs.
@@ -218,6 +231,7 @@ template was called.
              view, access to the type of comment system in use is lost
              when rendering a viewlet.
 
+.. _multiple-viewlets:
 
 Overwriting, Extending, and Multiple Viewlets
 =============================================
