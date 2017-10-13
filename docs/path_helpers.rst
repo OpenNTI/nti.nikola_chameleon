@@ -100,6 +100,8 @@ Generic Views
 These view objects are registered as default views for any object. You
 can override that registration for something more specific if needed.
 
+.. seealso:: :ref:`supplied-viewlets`
+
 Feeds
 -----
 
