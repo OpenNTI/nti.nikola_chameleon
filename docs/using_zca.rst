@@ -120,6 +120,8 @@ indirection that permits us flexibility and allows for easy
 Throughout, we will use the example of Nikola rendering a page (not a
 blog post) in a system that has Disqus comments enabled.
 
+.. _lookup-templates:
+
 Templates
 ---------
 
@@ -229,11 +231,14 @@ directives to do this::
         name="author.tmpl" />
     </configure>
 
+.. _lookup-macros:
+
 Macros
 ------
 
-When you use the ``macro:`` `expression type
-<https://pypi.python.org/pypi/z3c.macro>`_ in a template, the
+When you use the ``macro:``
+`expression type <https://pypi.python.org/pypi/z3c.macro>`_
+in a template, the
 registered macro is *also* looked up based on the current context,
 request, and view. Suppose we are in our ``disqus_page.pt`` rendering
 with our ``IPost`` context, ``IPostPageKind`` request layer, and
@@ -272,15 +277,13 @@ your :ref:`theme.zcml <zcml>` using the `z3c.macro
 
     </configure>
 
-.. note::
+By default, the name of the macro in the template file is the same as
+the name it is registered with: the ``name`` attribute in the ZCML
+element. If they need to be different, you can supply the ``macro``
+attribute in ZCML.
 
-   By default, the name of the macro in the template file is the same
-   as the name it is registered with: the ``name`` attribute in the
-   ZCML element. If they need to be different, you can supply the
-   ``macro`` attribute in ZCML.
-
-   For example, if we have two different kinds of comment systems in
-   ``comment_helper.pt``::
+For example, if we have two different kinds of comment systems in
+``comment_helper.pt``::
 
      <tal:block>
 
@@ -292,8 +295,8 @@ your :ref:`theme.zcml <zcml>` using the `z3c.macro
         </metal:block>
      </tal:block>
 
-   We could register them and use them both for different comment
-   systems with this ZCML::
+We could register them and use them both for different comment
+systems with this ZCML::
 
       <configure xmlns="http://namespaces.zope.org/zope"
                  xmlns:i18n="http://namespaces.zope.org/i18n"

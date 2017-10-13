@@ -115,9 +115,10 @@ Typical usage::
       ${structure:python:feeds.feed_translations_head(kind=kind , feeds=False)}
     </tal:block>
 
+.. _macros-view:
+
 Macros
 ------
-
 
 .. seealso:: :doc:`macros`
 
