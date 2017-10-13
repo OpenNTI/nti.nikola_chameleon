@@ -1,0 +1,12 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
+  <!-- fancy dates -->
+  <script tal:define="lang options/lang;
+                      mjslocal options/momentjs_locales/?lang;
+                      date_fanciness options/date_fanciness;
+                      js_date_format options/js_date_format;">
+    moment.locale("${mjslocal}");
+    fancydates(${date_fanciness}, ${js_date_format});
+  </script>
+  <!-- end fancy dates -->
+</tal:block>

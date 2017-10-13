@@ -1,0 +1,26 @@
+<!-- -*- mode: nxml -*- -->
+<configure	xmlns="http://namespaces.zope.org/zope"
+            xmlns:i18n="http://namespaces.zope.org/i18n"
+            xmlns:zcml="http://namespaces.zope.org/zcml"
+            xmlns:z3c="http://namespaces.zope.org/z3c"
+            xmlns:browser="http://namespaces.zope.org/browser"
+            >
+
+  <include package="z3c.macro" />
+  <include package="z3c.macro" file="meta.zcml" />
+  <include package="z3c.template" file="meta.zcml" />
+  <include package="zope.viewlet" file="meta.zcml" />
+
+  <!-- Viewlets and viewlet managers -->
+
+
+  <!-- Override extra js -->
+  <browser:viewlet
+      name="extra_body_footer_js"
+      manager=".interfaces.IHtmlBodyFooterViewletManager"
+      template="v_body_footer_extra_js.pt"
+      permission="zope.Public"
+      weight="1"
+      />
+
+</configure>

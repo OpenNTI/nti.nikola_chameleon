@@ -1,0 +1,39 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+             xmlns:metal="http://xml.zope.org/namespaces/metal"
+             xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+
+<!-- default archive navigation does nothing -->
+<metal:block metal:define-macro="archive_navigation" />
+
+<!-- This is registered for IArchivePageKind -->
+<metal:block metal:define-macro="archive_navigation_IArchivePageKind" >
+  <nav tal:condition="options/has_archive_navigation"
+       class="archivenav">
+    <ul class="pager">
+      <li class="previous"
+          tal:define="previous_archive options/previous_archive|string:#;
+                      class options/previous_archive|string:previous disabled;
+                      "
+          tal:attributes="class class">
+        <a href="${previous_archive}" rel="prev" i18n:translate="">Previous</a>
+      </li>
+      <li class="up"
+          tal:define="up_archive options/up_archive|string:#;
+                      class options/up_archive|string:up disabled;
+                      "
+          tal:attributes="class class">
+        <a href="${up_archive}" rel="up" i18n:translate="">Up</a>
+      </li>
+      <li class="next"
+          tal:define="next_archive options/next_archive|string:#;
+                      class options/next_archive|string:next disabled;
+                      "
+          tal:attributes="class class">
+        <a href="${next_archive}" rel="next" i18n:translate="">Next</a>
+      </li>
+    </ul>
+  </nav>
+</metal:block>
+
+</metal:block>

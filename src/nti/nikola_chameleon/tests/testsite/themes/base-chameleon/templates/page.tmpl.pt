@@ -1,0 +1,27 @@
+<html metal:use-macro="context/@@base.tmpl/index/macros/base"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal">
+
+<metal:block define-macro="html_page_article_header">
+    <header>
+      <metal:block metal:use-macro="macro:html_title" />
+      <metal:block metal:use-macro="macro:post_html_translations" />
+    </header>
+</metal:block>
+
+<article metal:fill-slot="content"
+		 class="post-${context/meta:type} storypage"
+		 itemscope="itemscope"
+		 itemtype="http://schema.org/Article">
+
+  <metal:block metal:use-macro="macro:html_page_article_header" />
+  <div class="e-content entry-content" itemprop="articleBody text">
+    ${structure:context/text}
+  </div>
+  <section class="comments hidden-print"
+		   metal:use-macro="macro:post_comment_form">
+    Comment form would go here.
+  </section>
+  <metal:block metal:use-macro="macro:math_scripts_ifpost" />
+  <metal:block metal:use-macro="macro:comment_link_script" />
+</article>
+</html>

@@ -1,0 +1,23 @@
+<tal:block xmlns:metal="http://xml.zope.org/namespaces/metal"
+           xmlns:tal="http://xml.zope.org/namespaces/tal">
+
+    <meta tal:condition="context/meta:keywords"
+          name="keywords"
+          content="${context/meta:keywords}" />
+    <meta name="author" content="${context/author}" />
+    <link tal:condition="context/prev_post"
+		  rel="prev" href="${context/prev_post/permalink}"
+		  title="${context/prev_post/title}" type="text/html" />
+    <link tal:condition="context/next_post"
+		  rel="next" href="${context/next_post/permalink}"
+		  title="${context/next_post/title}"
+		  type="text/html" />
+
+    <meta tal:condition="context/is_draft" name="robots"
+          content="noindex" />
+
+    <metal:block use-macro="macro:open_graph_metadata" />
+    <metal:block use-macro="macro:twitter_card_information" />
+    <metal:block use-macro="macro:meta_translations" />
+    <metal:block use-macro="macro:math_styles_ifpost" />
+</tal:block>

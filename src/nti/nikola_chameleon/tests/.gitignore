@@ -1,0 +1,5 @@
+testsite/cache/
+testsite/.doit.db.db
+testsite/.doit.db
+testsite/output
+testsite/plugins/__init__.py

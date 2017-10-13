@@ -1,0 +1,27 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+			 xmlns:metal="http://xml.zope.org/namespaces/metal"
+			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+
+<nav metal:define-macro="html_pager"
+     class="postindexpager">
+     <ul class="pager"
+         tal:condition="python:options['prevlink'] or options['nextlink']">
+
+       <li class="previous"
+		   tal:condition="options/prevlink">
+         <a href="${options/prevlink}" rel="prev" i18n:translate="">Newer posts</a>
+       </li>
+       <li class="next"
+		   tal:condition="options/nextlink">
+         <a href="${nextlink}" rel="next" i18n:translate="">Older posts</a>
+       </li>
+     </ul>
+</nav>
+
+<!--! The default does nothing -->
+<metal:block define-macro="front_index_header" />
+
+
+
+</metal:block>

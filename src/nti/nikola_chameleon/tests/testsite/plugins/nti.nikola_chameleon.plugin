@@ -1,0 +1,13 @@
+# -*- mode: conf; -*-
+[Core]
+Name = nti.nikola_chameleon
+Module = nti_nikola_chameleon
+
+[Documentation]
+Author = NextThought
+Version = 1.0
+Website = https://github.com/NextThought/nti.nikola_chameleon
+Description = Support for Chameleon ZPT templates.
+
+[Nikola]
+PluginCategory = Template

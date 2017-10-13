@@ -1,0 +1,78 @@
+<html metal:use-macro="context/@@base.tmpl/index/macros/base"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal">
+
+<!-- <%namespace name="feeds_translations" file="feeds_translations_helper.tmpl" import="*"/> -->
+
+
+<article class="tagindex"
+         metal:fill-slot="content"
+         tal:define="cat_items options/cat_items|nothing;
+                     items python:options.get('items');
+                     hidden_tags options/hidden_tags">
+  <!--! we use options.get('items') because the default path_traverse
+      from z3c.pt.expressions will fallback to DefaultTraversable if
+      the key is not found in the dict. DT, in turn, first attempts
+      getattr(), which would locate the dict.items() method, which
+      path_traverse would then happily call, giving us the wrong thing.
+
+      A better fix is probably to register a custom Traversable for a
+      dict that doesn't do that.
+  -->
+    <header>
+        <h1>${options/title}</h1>
+        <div class="metadata">
+            <!--! ${feeds_translations.translation_link(kind)} -->
+        </div>
+    </header>
+    <tal:block tal:condition="cat_items">
+        <h2 tal:condition="items" i18n:translate="">Categories</h2>
+        <!--!
+            XXX: The below does crazy things, potentially generating
+            badly invalid HTML. Please don't do this.
+        -->
+        <tal:block tal:repeat="cat options/cat_hierarchy">
+            <tal:block tal:define="text python:cat[0];
+                                   full_name python:cat[1];
+                                   path python:cat[2];
+                                   link python:cat[3];
+                                   indent_levels python:cat[4];
+                                   indent_change_before python:cat[5];
+                                   indent_change_after python:cat[6];
+                                   ul_open string:&lt;ul class=&quot;list-inline&quot;&gt;;
+                                   ul_opens python:ul_open * indent_change_before;
+                                   li_open string:&lt;li&gt;;
+                                   li_close string:&lt;/li&gt;;
+                                   ul_close string:&lt;/ul&gt;;
+                                   ">
+                <tal:block tal:content="structure:ul_opens" />
+
+                <tal:block tal:content="structure:li_open" />
+                <a class="reference badge" href="${link}">${text}</a>
+                <tal:block tal:condition="python:indent_change_after &lt;= 0">
+                    <tal:block tal:content="structure:li_close" />
+                </tal:block>
+                <tal:block tal:repeat="i python:range(-indent_change_after)">
+                  <tal:block tal:content="structure:ul_close" />
+                  <tal:block tal:condition="python:i + 1 &lt; len(indent_levels)">
+                    <tal:block tal:content="structure:li_close" />
+                  </tal:block>
+                </tal:block>
+            </tal:block>
+        </tal:block>
+
+
+        <h2 tal:condition="items" i18n:translate="">Tags</h2>
+    </tal:block>
+    <ul class="list-inline" tal:condition="items">
+        <tal:block tal:repeat="(text,link) items">
+            <li tal:condition="python:text not in hidden_tags">
+                <a class="reference badge" href="${link}">${text}</a>
+            </li>
+        </tal:block>
+    </ul>
+
+</article>
+
+</html>

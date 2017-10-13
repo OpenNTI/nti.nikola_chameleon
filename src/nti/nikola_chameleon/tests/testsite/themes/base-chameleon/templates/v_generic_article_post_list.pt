@@ -1,0 +1,11 @@
+<article class="${view/article_class}"
+         xmlns:tal="http://xml.zope.org/namespaces/tal"
+	     xmlns:metal="http://xml.zope.org/namespaces/metal">
+    <header>
+        <tal:block replace="structure provider:content_header" />
+    </header>
+
+    <ul metal:use-macro="macro:html_posts_postlist">
+        <li>A post</li>
+    </ul>
+</article>

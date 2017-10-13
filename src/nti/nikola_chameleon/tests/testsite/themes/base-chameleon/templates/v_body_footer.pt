@@ -1,0 +1,35 @@
+<metal:block xmlns:metal="http://xml.zope.org/namespaces/metal"
+             xmlns:tal="http://xml.zope.org/namespaces/tal">
+    <tal:block tal:condition="options/use_bundles">
+		<tal:block tal:condition="options/use_cdn">
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+			<script src="/assets/js/all.js"></script>
+		</tal:block>
+		<tal:block tal:condition="not:options/use_cdn">
+            <script src="/assets/js/all-nocdn.js"></script>
+		</tal:block>
+	</tal:block>
+	<tal:block tal:condition="not:options/use_bundles">
+		<tal:block tal:condition="options/use_cdn">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		</tal:block>
+		<tal:block tal:condition="not:options/use_cdn">
+            <script src="/assets/js/jquery.min.js"></script>
+            <script src="/assets/js/bootstrap.min.js"></script>
+            <script src="/assets/js/moment-with-locales.min.js"></script>
+            <script src="/assets/js/fancydates.js"></script>
+		</tal:block>
+        <script src="/assets/js/jquery.colorbox-min.js"></script>
+    </tal:block>
+
+
+    <script src="/assets/js/colorbox-i18n/jquery.colorbox-${colorbox_locales[lang]}.js"
+			tal:condition="options/colobox_locales/?lang|nothing"
+			tal:define="lang options/lang"
+			></script>
+
+    <tal:block tal:replace="structure: options/social_buttons_code" />
+</metal:block>

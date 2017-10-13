@@ -1,0 +1,15 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal">
+    <script
+	    src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.2/baguetteBox.min.js"
+	    tal:condition="options/use_cdn" />
+    <script src="/assets/js/baguetteBox.min.js"
+		    tal:condition="not:options/use_cdn" />
+
+    <script>
+  baguetteBox.run('a.reference', {
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+
+</tal:block>

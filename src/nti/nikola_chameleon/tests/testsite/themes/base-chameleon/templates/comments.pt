@@ -1,0 +1,104 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+             xmlns:metal="http://xml.zope.org/namespaces/metal"
+             xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+<!--! Macros for comments in various systems. -->
+
+<!--!
+Links in the header or index
+
+These will set the variable 'need_comment_script' to the context if
+they have ever been invoked and produced output while rendering a
+template. (Since we can only have one comment system at a time,
+this is idempotent.) You can then traverse that to get the script:
+   <div tal:define="global comment_link_post nothing"
+        tal:repeat="post posts">
+     <metal:block metal:use-macro="post/@@macros/comment_link" />
+   </div>
+   <metal:block metal:use-macr="comment_link_post/@@macros/comment_link_script">
+-->
+
+<!-- Dispatch macro name: comment-link -->
+
+
+<!--! No comments enabled. -->
+<metal:block metal:define-macro="comment-link-none" />
+
+<!-- Comments for disqus -->
+<p metal:define-macro="comment-link-disqus"
+   class="commentline"
+   tal:define="global need_comment_script context">
+  <a href="${context/permalink}#disqus_thread"
+     data-disqus-identifier="${context/_base_path}">
+    Comments
+  </a>
+</p>
+
+<!--! END: Links in the header or index -->
+
+<!--!
+    Scripts in the body when we display comments.
+ -->
+
+<!--! No comments enabled. -->
+<metal:block metal:define-macro="comment-link-script-none" />
+
+<!--! Comments for disqus -->
+<script metal:define-macro="comment-link-script-disqus"
+        tal:condition="options/comment_system_id"
+        tal:define="comment_system_id options/comment_system_id;">
+  var disqus_shortname="${comment_system_id}";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[
+0]||document.getElementsByTagName("body")[0]).appendChild(a)}());
+</script>
+
+<!--! END: Scripts in the body -->
+
+<!--! Comment forms -->
+
+<metal:block metal:define-macro="post-comment-form-none" />
+
+<section metal:define-macro="post-comment-form-generic"
+         class="comments hidden-print">
+  <h2 i18n:translate="">Comments</h2>
+  <metal:block metal:use-macro="macro:comment_form" />
+</section>
+
+<metal:block metal:define-macro="comment-form-none" />
+
+<metal:block metal:define-macro="comment-form-disqus"
+             tal:define="comment_system_id options/comment_system_id;
+                         url python:context.permalink(absolute=True);
+                         title context/title;
+                         identifier context/_base_path;
+                         lang options/lang;
+                         lang python:'es_ES' if lang == 'es' else lang;
+                         json import:json;">
+  <tal:block tal:condition="options/comment_system_id">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_shortname ="${comment_system_id}",
+        ${python:'disqus_url="'+url+'",' if url else ''}
+        disqus_title=${python:json.dumps(title)},
+        disqus_identifier="${identifier}",
+        disqus_config = function () {
+            this.language = "${lang}";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+    <a href="https://disqus.com" class="dsq-brlink"
+       rel="nofollow">Comments powered by <span
+       class="logo-disqus">Disqus</span></a>
+  </tal:block>
+  <tal:block tal:condition="not:options/comment_system_id">
+    <h1>Please configure the comment_system_id</h1>
+  </tal:block>
+</metal:block>
+
+<!--! END: Comment forms -->
+
+</metal:block>

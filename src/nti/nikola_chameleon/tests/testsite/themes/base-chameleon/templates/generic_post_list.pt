@@ -1,0 +1,9 @@
+<html metal:use-macro="context/@@base.tmpl/index/macros/base"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal">
+
+
+<article metal:fill-slot="content"
+         tal:replace="structure provider:post_list_article" />
+
+</html>

@@ -1,0 +1,39 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+			 xmlns:metal="http://xml.zope.org/namespaces/metal"
+			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+  <!--! We don't need to repeat the blog title on every page. -->
+  <!--! This turns it off everywhere. We could tighten this with a
+      particular registration if we needed to. -->
+  <metal:block metal:define-macro="html_site_title" />
+
+  <!--! Ditto for the in-page navigation links. They go in the header. -->
+  <metal:block metal:define-macro="html_navigation_links" />
+
+  <!--! Show navbar links in the right only -->
+  <metal:block metal:define-macro="html_left_navbar_navigation_links" />
+
+  <metal:block metal:define-macro="html_page_header_data" />
+
+  <header class="intro-header"
+          metal:define-macro="html_page_header"
+          style="background-image: url('/assets/img/home-bg.jpg')"
+          tal:attributes="style python:options['data'].get('header_style') or default"
+          >
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="site-heading">
+            <span metal:use-macro="macro:html_page_header_data">
+              <h1>Clean Blog</h1>
+              <hr class="small" />
+              <span class="subheading">A Clean Blog Theme by Start
+              Bootstrap</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+</metal:block>

@@ -1,0 +1,14 @@
+<tal:block
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+    <!-- I'm index extra -->
+    <link
+        tal:define="posts options/posts;
+                    permalink options/permalink;
+                    index_file options/index_file|string:nothing"
+        tal:condition="python: posts and (permalink == '/' or permalink == '/' + index_file)"
+        rel="prefetch"
+        href="${python:options['posts'][0].permalink()}"
+        type="text/html" />
+    <metal:block metal:use-macro="macro:math_styles_ifposts" />
+</tal:block>

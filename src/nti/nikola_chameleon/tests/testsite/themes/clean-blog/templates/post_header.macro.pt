@@ -1,0 +1,92 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+             xmlns:metal="http://xml.zope.org/namespaces/metal"
+             xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+
+<metal:block metal:define-macro="html_post_title_author_meta"
+        tal:define="_link nocall:options/_link;
+                    post context;
+                    date_format options/date_format;
+                    site_has_comments options/site_has_comments">
+  <div class="container"
+     tal:define="post context; title options/title"
+     tal:condition="python:title and not post.meta('hidetitle')">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1 class="p-name entry-title" itemprop="headline name" >
+            ${post/title}
+          </h1>
+          <span class="meta">Posted by
+          <span class="byline author vcard byline-name fn" itemprop="author">
+            <a href="${python:_link('author', post.author())}"
+               tal:omit-tag="not:options/author_pages_generated">
+              ${post/author}
+            </a>
+          </span>
+          on <span class="dateline">
+          <a href="${post/permalink}" rel="bookmark">
+            <time class="published dt-published"
+                  datetime="${python:post.formatted_date('webiso')}"
+                  itemprop="datePublished"
+                  title="${python:post.formatted_date(date_format)}">
+              ${python:context.formatted_date(date_format)}
+            </time>
+          </a>.
+        </span>
+        <span class="linkline"
+              tal:condition="python:post.meta('link')">
+          <a href="${python:post.meta('link')}" i18n:translate="">Original site</a>
+        </span>
+        <!--! Eliding support for comments and sourcelink -->
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</metal:block>
+
+<metal:block metal:define-macro="html_post_header_IPostPageKind">
+    <header class="intro-header" style="background-image: url('/assets/img/post-bg.jpg')"
+            tal:attributes="style python:context.data.get('header_style') or default"
+            >
+      <metal:block metal:use-macro="macro:html_post_title_author_meta" />
+      <metal:block metal:use-macro="macro:post_html_translations" />
+    </header>
+</metal:block>
+
+<metal:block metal:define-macro="html_post_header" />
+
+<metal:block metal:define-macro="html_page_header_IPagePageKind">
+    <header class="intro-header" style="background-image: url('/assets/img/page-bg.jpg')"
+            tal:attributes="style python:context.data.get('header_style') or default"
+            >
+
+      <div class="container"
+           tal:define="title options/title">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1 class="p-name entry-title"
+                  itemprop="headline name"
+                  tal:condition="python:title and not context.meta('hidetitle')">
+                <!--!
+                    If we leave out this row entirely, then the
+                    header doesn't display correctly because it shows
+                    white-on-white. We need the image for padding,
+                    basically.
+                -->
+                ${title}
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <metal:block metal:use-macro="macro:post_html_translations" />
+    </header>
+</metal:block>
+
+<metal:block metal:define-macro="html_page_article_header" />
+
+
+</metal:block>

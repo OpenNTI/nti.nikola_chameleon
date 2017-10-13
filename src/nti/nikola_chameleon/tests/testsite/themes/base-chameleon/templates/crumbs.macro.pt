@@ -1,0 +1,27 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+             xmlns:metal="http://xml.zope.org/namespaces/metal"
+             xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+
+<metal:block metal:define-macro="breadcrumbbar">
+<nav class="breadcrumbs"
+     tal:condition="options/crumbs"
+     tal:define="crumbs options/crumbs">
+    <ul class="breadcrumb">
+        <tal:block tal:repeat="link_text crumbs">
+            <tal:block
+                tal:condition="python:link_text[1] != options['index_file']"
+                tal:define="link python:link_text[0]; text python:link_text[1]"
+                tal:switch="link">
+                <li tal:case="python:'#'">
+                    ${python:text.rsplit('.html', 1)[0]}
+                </li>
+                <li tal:case="default">
+                    <a href="${link}">${text}</a>
+                </li>
+            </tal:block>
+        </tal:block>
+    </ul>
+</nav>
+</metal:block>
+</metal:block>

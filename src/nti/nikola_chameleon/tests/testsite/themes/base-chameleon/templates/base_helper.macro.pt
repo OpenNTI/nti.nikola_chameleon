@@ -1,0 +1,164 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+			 xmlns:metal="http://xml.zope.org/namespaces/metal"
+			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+<!--! <%namespace name="feeds_translations" file="feeds_translations_helper.tmpl" import="*"/> -->
+
+<!--!
+Note that we're hardcoding to use_open_graph with twitter cards.
+Not also that we're dropping rtl support.
+Also dropping translation support.
+-->
+
+<head
+    metal:define-macro="html_headstart"
+    tal:define="use_base_tag options/use_base_tag|nothing;
+                description options/description|nothing;
+                abs_link nocall:options/abs_link;
+                permalink options/permalink|nothing;
+                title options/title|nothing;
+                blog_title options/blog_title;
+                prevlink options/prevlink|nothing;
+                nextlink options/nextlink|nothing;
+                feeds context/@@feeds">
+
+    <meta charset="utf-8" />
+    <base href="${python:abs_link(permalink)}"
+          tal:condition="use_base_tag" />
+    <meta name="description" content="${description}"
+          tal:condition="description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title tal:condition="python:title == blog_title or not title">${blog_title}</title>
+    <title tal:condition="python:title and title != blog_title">${title} | ${blog_title}</title>
+
+    <link metal:use-macro="macro:html_stylesheets" />
+
+    <meta name="theme-color" content="${options/theme_color}" />
+    <meta name="generator" content="Nikola (getnikola.com)"
+          tal:condition="options/meta_generator_tag" />
+
+
+    ${structure:python:feeds.feed_translations_head(classification=None, kind='index', other=False)}
+
+    <link rel="canonical" href="${python:abs_link(permalink)}" />
+
+	<tal:block tal:condition="options/favicons"
+			   tal:repeat="(name,file,size) options/favicons">
+        <link rel="${name}" href="${file}" sizes="${size}" />
+	</tal:block>
+
+    <meta property="fb:app_id" content="${comment_system_id}"
+          tal:condition="python:options['comment_system'] == 'facebook'" />
+
+    <link rel="prev" href="${prevlink}" type="text/html"
+          tal:condition="prevlink" />
+
+
+    <link rel="next" href="${nextlink}" type="text/html"
+          tal:condition="nextlink" />
+
+    <tal:block tal:condition="options/use_cdn">
+        <!--[if lt IE 9]><script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    </tal:block>
+    <tal:block tal:condition="not:options/use_cdn"
+			   tal:define="url_replacer nocall:options/url_replacer;
+						   lang options/lang;
+						   url_type options/url_type;">
+        <!--[if lt IE 9]><script src="${python:url_replacer(permalink, '/assets/js/html5.js', lang, url_type)}"></script><![endif]-->
+    </tal:block>
+
+    <!--! extra_head_data is a value set in config -->
+    <tal:block tal:replace="structure:options/extra_head_data"
+               tal:condition="options/extra_head_data"/>
+
+    <!--! The extensible viewlet manager; anyone can add things based
+         on view, context and request/layer to it. -->
+    <tal:block content="structure provider:extra_head" />
+
+</head>
+
+<metal:block metal:define-macro="html_stylesheets_bundled_cdn">
+  <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.2/baguetteBox.min.css"
+      rel="stylesheet"
+      type="text/css"
+      />
+</metal:block>
+
+<metal:block metal:define-macro="html_stylesheets_non_bundled_cdn" />
+<metal:block metal:define-macro="html_stylesheets_non_bundled_nocdn" />
+<metal:block metal:define-macro="html_stylesheets_non_bundled" >
+  <link href="/assets/css/baguetteBox.min.css" rel="stylesheet"
+        type="text/css" />
+</metal:block>
+<metal:block metal:define-macro="html_stylesheets_extensions" />
+
+<metal:block metal:define-macro="html_stylesheets">
+    <tal:block tal:condition="options/use_bundles">
+      <link metal:use-macro="macro:html_stylesheets_bundled_cdn"
+            tal:condition="options/use_cdn" />
+      <link href="/assets/css/all.css" rel="stylesheet"
+            type="text/css"
+            tal:condition="options/use_cdn"/>
+      <link href="/assets/css/all-nocdn.css" rel="stylesheet"
+            type="text/css"
+            tal:condition="not:options/use_cdn"/>
+    </tal:block>
+    <tal:block tal:condition="not:options/use_bundles">
+      <link metal:use-macro="macro:html_stylesheets_non_bundled_cdn"
+            tal:condition="options/use_cdn" />
+      <link metal:use-macro="macro:html_stylesheets_non_bundled_nocdn"
+            tal:condition="not:options/use_cdn" />
+      <link metal:use-macro="macro:html_stylesheets_non_bundled"
+            />
+
+        <link href="/assets/css/rst_base.css" rel="stylesheet"
+              type="text/css" />
+        <link href="/assets/css/nikola_rst.css" rel="stylesheet"
+              type="text/css" />
+        <link href="/assets/css/code.css" rel="stylesheet"
+              type="text/css" />
+        <link href="/assets/css/theme.css" rel="stylesheet"
+              type="text/css" />
+        <link href="/assets/css/custom.css" rel="stylesheet"
+              type="text/css"
+              tal:condition="options/has_custom_css" />
+    </tal:block>
+    <tal:block tal:condition="options/needs_ipython_css">
+        <link href="/assets/css/ipython.min.css" rel="stylesheet"
+              type="text/css" />
+        <link href="/assets/css/nikola_ipython.css" rel="stylesheet"
+              type="text/css" />
+    </tal:block>
+
+    <link href="assets/another.css"
+          metal:use-macro="macro:html_stylesheets_extensions" />
+
+</metal:block>
+
+<metal:block metal:define-macro="html_translations">
+    <ul class="translations"
+		tal:define="abs_link nocall:options/abs_link;
+		            _link nocall:options/link;">
+		<li tal:repeat="langname python:sorted(options['translations''])"
+			tal:omit-tag="python:langname == options['lang']">
+            <a href="${abs_link(_link('root', None, langname))}"
+               rel="alternate"
+               i18n:translate=""
+               i18n:target="langname"
+               hreflang="${langname}">LANGUAGE</a>
+		</li>
+    </ul>
+</metal:block>
+
+
+
+<!--!
+### This function is deprecated; use feed_helper directly.
+<metal:block metal:define-macro="html_feedlinks()">
+    ${feeds_translations.head(classification=None, kind='index', other=False)}
+</metal:block>
+
+-->
+</metal:block>

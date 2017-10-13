@@ -1,0 +1,14 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+			 xmlns:metal="http://xml.zope.org/namespaces/metal"
+			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+<metal:block metal:define-macro="folder-open" >
+<i class="glyphicon glyphicon-folder-open"></i>
+</metal:block>
+
+
+<metal:block metal:define-macro="file" >
+<i class="glyphicon glyphicon-file"></i>
+</metal:block>
+
+</metal:block>

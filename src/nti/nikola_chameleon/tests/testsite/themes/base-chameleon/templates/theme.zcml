@@ -1,0 +1,454 @@
+<!-- -*- mode: nxml -*- -->
+<configure	xmlns="http://namespaces.zope.org/zope"
+            xmlns:i18n="http://namespaces.zope.org/i18n"
+            xmlns:zcml="http://namespaces.zope.org/zcml"
+            xmlns:z3c="http://namespaces.zope.org/z3c"
+            xmlns:browser="http://namespaces.zope.org/browser"
+            >
+
+  <include package="z3c.macro" />
+  <include package="z3c.macro" file="meta.zcml" />
+  <include package="z3c.template" file="meta.zcml" />
+  <include package="zope.viewlet" file="meta.zcml" />
+  <include package="nti.nikola_chameleon" file="meta.zcml" />
+
+  <z3c:macro name="open_graph_metadata"
+             for=".interfaces.IPost"
+             view="*"
+             template="post_helper.pt"
+             layer="*" />
+
+  <z3c:macro name="html_tags"
+             for=".interfaces.IPost"
+             view="*"
+             template="post_helper.pt"
+             layer="*" />
+
+  <z3c:macro name="html_pager"
+             for=".interfaces.IPost"
+             view="*"
+             template="post_helper.pt"
+             layer="*" />
+
+  <z3c:macro name="twitter_card_information"
+             for=".interfaces.IPost"
+             view="*"
+             template="post_helper.pt"
+             layer="*" />
+
+
+  <z3c:macro name="meta_translations"
+             for=".interfaces.IPost"
+             view="*"
+             template="post_helper.pt"
+             layer="*" />
+
+  <z3c:macro name="math_scripts_ifpost"
+             for=".interfaces.IPost"
+             view="*"
+             template="math_helper.macro.pt"
+             layer="*" />
+
+  <z3c:macro name="math_styles_ifpost"
+             for=".interfaces.IPost"
+             view="*"
+             template="math_helper.macro.pt"
+             layer="*" />
+
+  <z3c:macro name="post_html_translations"
+             for=".interfaces.IPost"
+             view="*"
+             template="post_header.macro.pt"
+             layer="*" />
+
+  <z3c:macro name="archive_navigation"
+             macro="archive_navigation_IArchivePageKind"
+             for="*"
+             view="*"
+             template="archive_navigation_helper.macro.pt"
+             layer=".interfaces.IArchivePageKind"
+             />
+
+  <z3c:macro name="front_index_header"
+             macro="front_index_header_IMainIndexPageKind"
+             for="*"
+             view="*"
+             template="index.tmpl.pt"
+             layer=".interfaces.IMainIndexPageKind"
+             />
+
+  <!-- Comment systems -->
+  <z3c:macro name="comment_link"
+             macro="comment-link-none"
+             for="*"
+             view=".interfaces.ICommentKindNone"
+             layer="*"
+             template="comments.pt" />
+
+  <z3c:macro name="comment_link"
+             macro="comment-link-disqus"
+             for="*"
+             view=".interfaces.ICommentKindDisqus"
+             layer="*"
+             template="comments.pt" />
+
+
+  <z3c:macro name="comment_link_script"
+             macro="comment-link-script-disqus"
+             for="*"
+             view=".interfaces.ICommentKindDisqus"
+             layer="*"
+             template="comments.pt" />
+
+  <z3c:macro name="comment_link_script"
+             macro="comment-link-script-none"
+             for="*"
+             view=".interfaces.ICommentKindNone"
+             layer="*"
+             template="comments.pt" />
+
+  <z3c:macro name="comment_form"
+             macro="comment-form-disqus"
+             for="*"
+             view=".interfaces.ICommentKindDisqus"
+             layer="*"
+             template="comments.pt" />
+
+  <z3c:macro name="comment_form"
+             macro="comment-form-none"
+             for="*"
+             view=".interfaces.ICommentKindNone"
+             layer="*"
+             template="comments.pt" />
+
+  <z3c:macro name="post_comment_form"
+             macro="post-comment-form-generic"
+             for="*"
+             view=".interfaces.ICommentKindAllowed"
+             layer="*"
+             template="comments.pt" />
+
+  <z3c:macro name="post_comment_form"
+             macro="post-comment-form-none"
+             for="*"
+             view=".interfaces.ICommentKindNone"
+             layer="*"
+             template="comments.pt" />
+
+
+  <!-- Viewlets and Viewlet managers -->
+  <!-- To extend, use a new name. To replace use the same name
+       with at least as specific a registration.
+  -->
+
+  <!-- Extra head -->
+  <!-- The normal extra head for a page is called 'default_extra_head' -->
+  <browser:viewletManager
+      name="extra_head"
+      provides=".interfaces.IHtmlHeadViewletManager"
+      class="zope.viewlet.manager.WeightOrderedViewletManager"
+      permission="zope.Public"
+      />
+
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_index_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IIndexPageKind"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="archive_index_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_archiveindex_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IArchiveIndexPageKind"
+      weight="1"
+      />
+
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_author_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IAuthorPageKind"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_authors_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IAuthorsPageKind"
+      weight="0"
+      />
+
+
+  <!-- This covers list.tmpl and archiveindex.tmpl
+       and IListKind and IArchiveListKind -->
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_list_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IListPageKind"
+      weight="0"
+      />
+
+  <!-- posts, pages, stories and books all have the same extra header -->
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_post_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IPostPageKind"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_post_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IPagePageKind"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_post_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IStoryPageKind"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_post_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IBookPageKind"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_gallery_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IGalleryPageKind"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_tag_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.ITagPageKind"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="default_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_tags_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.ITagsPageKind"
+      weight="0"
+      />
+
+  <!-- books get extra -->
+  <browser:viewlet
+      name="book_extra_head"
+      manager=".interfaces.IHtmlHeadViewletManager"
+      template="v_book_extra_head.pt"
+      permission="zope.Public"
+      layer=".interfaces.IBookPageKind"
+      weight="1"
+      />
+
+  <!-- *************** -->
+  <!-- Content headers -->
+  <browser:viewletManager
+      name="content_header"
+      provides=".interfaces.IHtmlBodyContentHeaderViewletManager"
+      class=".view.ConditionalViewletManager"
+      permission="zope.Public"
+      />
+
+  <!-- Archive Index page -->
+  <browser:viewlet
+      name="archive_index_content_header"
+      manager=".interfaces.IHtmlBodyContentHeaderViewletManager"
+      template="v_archiveindex_content_header.pt"
+      layer=".interfaces.IArchiveIndexPageKind"
+      permission="zope.Public"
+      />
+
+  <!-- Author page -->
+  <browser:viewlet
+      name="title_content_header"
+      manager=".interfaces.IHtmlBodyContentHeaderViewletManager"
+      template="v_generic_title.pt"
+      layer=".interfaces.IAuthorPageKind"
+      permission="zope.Public"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="description_content_header"
+      manager=".interfaces.IHtmlBodyContentHeaderViewletManager"
+      template="v_generic_description.pt"
+      layer=".interfaces.IAuthorPageKind"
+      permission="zope.Public"
+      weight="2"
+      />
+
+  <browser:viewlet
+      name="feed_content_header"
+      manager=".interfaces.IHtmlBodyContentHeaderViewletManager"
+      class=".feeds.HTMLFeedLinkViewlet"
+      layer=".interfaces.IAuthorPageKind"
+      permission="zope.Public"
+      weight="1"
+      classification_name="author"
+      />
+
+  <!-- Tag page -->
+  <browser:viewlet
+      name="title_content_header"
+      manager=".interfaces.IHtmlBodyContentHeaderViewletManager"
+      template="v_generic_title.pt"
+      layer=".interfaces.ITagPageKind"
+      permission="zope.Public"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="feed_content_header"
+      manager=".interfaces.IHtmlBodyContentHeaderViewletManager"
+      class=".feeds.HTMLFeedLinkViewlet"
+      layer=".interfaces.ITagPageKind"
+      permission="zope.Public"
+      weight="1"
+      classification_name="tag"
+      />
+
+  <browser:viewlet
+      name="description_content_header"
+      manager=".interfaces.IHtmlBodyContentHeaderViewletManager"
+      template="v_generic_description.pt"
+      layer=".interfaces.ITagPageKind"
+      permission="zope.Public"
+      weight="2"
+      />
+
+  <browser:viewlet
+      name="subcat_content_header"
+      manager=".interfaces.IHtmlBodyContentHeaderViewletManager"
+      template="v_tag_subcat_content_header.pt"
+      layer=".interfaces.ITagPageKind"
+      permission="zope.Public"
+      weight="3"
+      />
+
+  <!-- ************ -->
+  <!-- Body content -->
+  <browser:newViewletManager
+      id="IPostListArticle" />
+  <browser:viewletManager
+      name="post_list_article"
+      provides=".viewlets.IPostListArticle"
+      class=".view.ConditionalViewletManager"
+      permission="zope.Public"
+      />
+
+  <browser:viewlet
+      name="default_article"
+      manager=".viewlets.IPostListArticle"
+      template="v_generic_article_post_list.pt"
+      layer=".interfaces.ITagPageKind"
+      permission="zope.Public"
+      article_class="tagpage"
+      />
+
+
+  <browser:viewlet
+      name="default_article"
+      manager=".viewlets.IPostListArticle"
+      template="v_generic_article_post_list.pt"
+      layer=".interfaces.IAuthorPageKind"
+      permission="zope.Public"
+      article_class="authorpage"
+      />
+
+  <!-- Body footers -->
+
+  <!-- The main body template puts this after the content to include
+       additional javascript -->
+  <browser:viewletManager
+      name="body_footer_js"
+      provides=".interfaces.IHtmlBodyFooterViewletManager"
+      class="zope.viewlet.manager.WeightOrderedViewletManager"
+      permission="zope.Public"
+      />
+
+  <browser:viewlet
+      name="generic_body_footer_js"
+      manager=".interfaces.IHtmlBodyFooterViewletManager"
+      template="v_body_footer.pt"
+      permission="zope.Public"
+      weight="0"
+      />
+
+  <browser:viewlet
+      name="extra_body_footer_js"
+      manager=".interfaces.IHtmlBodyFooterViewletManager"
+      template="v_body_footer_extra_js.pt"
+      permission="zope.Public"
+      weight="1"
+      />
+
+  <!-- book adds body footers -->
+  <browser:viewlet
+      name="default_body_footer_js"
+      manager=".interfaces.IHtmlBodyFooterViewletManager"
+      layer=".interfaces.IBookPageKind"
+      permission="zope.Public"
+      template="v_book_footer_extra_js.pt"
+      weight="9"
+      />
+
+  <!-- gallery adds body footers -->
+  <browser:viewlet
+      name="default_body_footer_js"
+      manager=".interfaces.IHtmlBodyFooterViewletManager"
+      layer=".interfaces.IGalleryPageKind"
+      permission="zope.Public"
+      template="v_gallery_footer_extra_js.pt"
+      weight="9"
+      />
+
+  <!-- alias 'archiveindex.tmpl' (which we don't have)
+       to 'index.tmpl' (which we do) -->
+  <z3c:template
+      template="index.tmpl.pt"
+      name="archiveindex.tmpl"
+      layer=".interfaces.IArchiveIndexPageKind"
+      />
+
+  <z3c:template
+      template="generic_post_list.pt"
+      name="tag.tmpl" />
+
+  <z3c:template
+      template="generic_post_list.pt"
+      name="author.tmpl" />
+
+
+</configure>

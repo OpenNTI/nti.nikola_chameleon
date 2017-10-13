@@ -1,0 +1,28 @@
+<html metal:use-macro="context/@@base.tmpl/index/macros/base"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal">
+
+
+<!--! <%inherit file="base.tmpl"/> -->
+<!--! <%namespace name="feeds_translations" file="feeds_translations_helper.tmpl" import="*"/> -->
+
+
+<article class="authorindex"
+         metal:fill-slot="content"
+         tal:condition="options/items">
+    <h2 i18n:translate="">Authors</h2>
+    <div class="metadata">
+            <!--! ${feeds_translations.translation_link(kind)} -->
+    </div>
+    <ul class="postlist"
+        tal:define="hidden_authors options/hidden_authors">
+        <li tal:repeat="(name,link) options/items"
+            tal:omit-tag="python:name in hidden_authors">
+            <a class="reference listtitle"
+               href="${link}">${name}</a>
+        </li>
+    </ul>
+</article>
+
+</html>

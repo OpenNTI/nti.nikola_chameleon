@@ -21,3 +21,15 @@ recursive-include docs Makefile
 
 recursive-include src *.zcml
 recursive-include src *.plugin
+
+# added by check_manifest.py
+recursive-include src *.ico
+recursive-include src *.jpg
+recursive-include src *.meta
+recursive-include src *.png
+recursive-include src *.pt
+recursive-include src *.py
+recursive-include src *.rst
+recursive-include src *.theme
+recursive-include src *.tmpl
+recursive-include src *.txt

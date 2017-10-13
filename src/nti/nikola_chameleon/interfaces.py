@@ -191,7 +191,13 @@ class IPostPage(IPost, IPageKind):
 
 def _build(iface, result, tag='__pagekinds__', tx=lambda x: x):
     __traceback_info__ = iface, tag
+    if not getattr(iface, '__module__', None) == __name__:
+        # Provides() objects that exist from alsoProvides()
+        # being set. Probably will go away on a GC?
+        return
+
     kinds = iface.getTaggedValue(tag)
+
     kinds = tx(kinds)
     if kinds in result and kinds: # pragma: no cover
         if result[kinds] is iface:

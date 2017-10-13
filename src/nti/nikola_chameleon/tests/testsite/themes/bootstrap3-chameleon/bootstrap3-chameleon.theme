@@ -1,0 +1,15 @@
+# -*- mode: conf; -*-
+[Theme]
+engine = nti.nikola_chameleon
+author = NextThought
+author_url =
+license = Apache2
+based_on = Bootstrap 3 <https://getbootstrap.com/>
+tags = bootstrap
+parent = base-chameleon
+
+[Family]
+family = bootstrap3
+
+[Nikola]
+bootswatch = True

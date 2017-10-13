@@ -1,0 +1,8 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           tal:define="has_no_feeds options/has_no_feeds|nothing;
+                       kind options/kind;
+                       feeds context/@@feeds
+                       ">
+    <!--! has_no_feeds is not defined in 7.8.10, but it is in github master -->
+    ${structure:python:feeds.feed_translations_head(kind=kind, rss_override=False, has_no_feeds=has_no_feeds)}
+</tal:block>

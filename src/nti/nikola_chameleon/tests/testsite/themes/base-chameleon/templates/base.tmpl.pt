@@ -1,0 +1,41 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+			 xmlns:metal="http://xml.zope.org/namespaces/metal"
+			 xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+			 define-macro="base">
+	<metal:block define-slot="doctype"><tal:doctype tal:replace="structure string:&lt;!DOCTYPE html &gt;" /></metal:block>
+
+<!--!
+Note that we're hardcoding to use_open_graph with twitter cards.
+Not also that we're dropping rtl support.
+Also dropping translation support.
+-->
+
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# "
+      vocab="http://ogp.me/ns"
+	  tal:attributes="lang options/lang|nothing"
+	  lang="en">
+
+  <head metal:use-macro="macro:html_headstart" />
+
+  <body>
+      <a href="#content" class="sr-only sr-only-focusable" i18n:translate="">Skip to main content</a>
+      <metal:block metal:use-macro="macro:html_nav_menu" />
+      <metal:block metal:use-macro="macro:html_page_header" />
+      <div class="container" id="content" role="main">
+        <div class="body-content">
+          <div class="row">
+		    <metal:block metal:use-macro="macro:html_header" />
+		    <div metal:define-slot="content" ></div>
+            <metal:block metal:use-macro="macro:html_footer" />
+          </div>
+        </div>
+      </div>
+
+      <metal:block tal:replace="structure provider:body_footer_js" />
+
+    <!--! ${body_end} -->
+    <!--! ${template_hooks['body_end']()} -->
+</body>
+
+</html>
+</metal:block>

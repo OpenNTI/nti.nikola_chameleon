@@ -1,0 +1,100 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+			 xmlns:metal="http://xml.zope.org/namespaces/metal"
+			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+<metal:block metal:define-macro="html_header">
+    <header id="header">
+        <metal:block metal:use-macro="macro:html_site_title" />
+		<metal:block metal:use-macro="macro:html_translation_header" />
+		<metal:block metal:use-macro="macro:html_navigation_links" />
+
+        <div class="searchform" role="search"
+			 tal:condition="options/search_form"
+			 tal:content="structure options/search_form">
+
+        </div>
+    </header>
+    <!--! ${template_hooks['page_header']()} -->
+</metal:block>
+
+<metal:block metal:define-macro="html_page_header" />
+
+<metal:block metal:define-macro="html_site_title"
+			 tal:define="abs_link nocall:options/abs_link;
+						 _link nocall:options/_link;
+						 lang options/lang">
+    <h1 id="brand">
+		<a href="${python:abs_link(_link('root', None, lang))}"
+		   title="${options/blog_title}" rel="home">
+			<img tal:condition="options/logo_url"
+				 src="${options/logo_url}" alt="${options/blog_title}"
+				 id="logo" />
+
+			<span id="blog-title"
+				  tal:condition="options/show_blog_title"
+				  tal:content="options/blog_title">
+				Blog Title
+			</span>
+
+		</a>
+	</h1>
+</metal:block>
+
+<metal:block metal:define-macro="html_navigation_links">
+    <nav id="menu">
+    <ul tal:define=" lang options/lang;
+					permalink options/permalink;
+					rel_link nocall:options/rel_link">
+		<tal:block tal:repeat="url_text python:options['navigation_links'][lang]">
+			<tal:block tal:define="url python:url_text[0]; text python:url_text[1]">
+				<li tal:condition="python:isinstance(url, tuple)">
+					${text}
+					<ul>
+						<tal:block tal:repeat="suburl_text url">
+							<tal:block tal:switch="python:rel_link(permalink, suburl[0]) == '#'">
+								<li tal:case="True" class="active">
+									<a href="${permalink}">${python:suburl_text[1]}
+                                    <span class="sr-only"
+                                          i18n:translate=""
+                                          i18n:target="lang">(active)</span>
+                                    </a>
+								</li>
+								<li tal:case="False">
+									<a
+										href="${python:suburl[0]}">${python:suburl_text[1]}</a>
+								</li>
+							</tal:block>
+						</tal:block>
+					</ul>
+				</li>
+				<tal:block tal:condition="python:not isinstance(url, tuple)">
+					<tal:block tal:switch="python:rel_link(permalink, url) == '#'">
+						<li tal:case="True" class="active">
+							<a href="${permalink}">${text}
+                            <span class="sr-only"
+                                  i18n:translate=""
+                                  i18n:target="lang">(active)</span>
+                            </a>
+						</li>
+						<li tal:case="False">
+							<a href="${url}">${text}</a>
+						</li>
+					</tal:block>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+    <!--! ${template_hooks['menu']()} -->
+    <!--! ${template_hooks['menu_alt']()} -->
+    </ul>
+    </nav>
+</metal:block>
+
+<metal:block metal:define-macro="html_translation_header">
+    <div id="toptranslations"
+		 tal:condition="python:len(options['translations']) > 1">
+        <h2 i18n:translate="">Languages:</h2>
+		<metal:block metal:use-macro="macro:html_translations" />
+    </div>
+</metal:block>
+
+</metal:block>

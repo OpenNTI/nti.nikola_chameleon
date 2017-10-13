@@ -1,0 +1,77 @@
+<html metal:use-macro="context/@@base.tmpl/index/macros/base"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+
+<!--! <%namespace name="feeds_translations" file="feeds_translations_helper.tmpl" import="*"/> -->
+
+
+<!--! This is registered for IMainIndexPageKind -->
+<!--! TODO: A viewlet -->
+<metal:block define-macro="front_index_header_IMainIndexPageKind">
+    <h1 tal:replace="structure:options/front_index_header" />
+</metal:block>
+
+
+<metal:block metal:fill-slot="content">
+    <header>
+        <h1 metal:use-macro="macro:front_index_header" />
+        <tal:block replace="structure provider:content_header" />
+    </header>
+
+
+    <metal:block use-macro="macro:page_navigation"
+                 tal:condition="options/page_links|nothing" />
+    <div class="postindex"
+         tal:define="_link nocall:options/_link;
+                     global need_comment_script nothing">
+      <tal:block tal:repeat="post options/posts">
+        <article tal:define="post_text post/@@post_text"
+                 class="h-entry post-${post/meta:type}
+                        ${post_text/preview}">
+                <a href="${post/permalink}" class="u-url">
+                  <h1 class="p-name entry-title
+                             post-title">${post/title}</h1>
+                </a>
+                <div class="metadata post-meta">
+                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                        <a tal:condition="options/author_pages_generated"
+                           href="${python:_link('author', post.author())}">
+                            ${post/author}
+                        </a>
+                        <a tal:condition="not:options/author_pages_generated"
+                           tal:replace="post/author" />
+                    </span></p>
+                    <p class="dateline">
+                        <a href="${post/permalink}" rel="bookmark">
+                            <time class="published dt-published"
+                                  datetime="${python:post.formatted_date('webiso')}"
+                                  title="${python:post.formatted_date(options['date_format'])}">
+                                ${python:post.formatted_date(options['date_format'])}
+                            </time>
+                        </a>
+                    </p>
+                    <p metal:use-macro="post/@@macros/comment_link"
+                       class="commentline" />
+                </div>
+
+            <div
+                 class="p-${post_text/content_kind} entry-${post_text/content_kind}"
+                 tal:content="structure:post_text/content">
+                The content of the post.
+
+                This may be just a teaser.
+            </div>
+        </article>
+        <hr tal:omit-tag="repeat/post/end" />
+      </tal:block>
+      <script metal:use-macro="need_comment_script/@@macros/comment_link_script"
+              tal:condition="need_comment_script" />
+    </div>
+
+    <metal:block metal:use-macro="macro:html_pager" />
+    <metal:block metal:use-macro="macro:math_scripts_ifposts" />
+
+
+</metal:block>
+
+</html>

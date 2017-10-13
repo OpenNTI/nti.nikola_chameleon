@@ -1,0 +1,30 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+			 xmlns:metal="http://xml.zope.org/namespaces/metal"
+			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+<metal:block metal:define-macro="page_navigation">
+	<div class="page-navigation"
+		 tal:define="surrounding 5;
+					 curent_page options/current_page;
+					 page_links options/page_links">
+		<tal:block tal:repeat="link options/page_links"
+				   tal:define="i repeat/link/index">
+			<tal:block
+				tal:condition="python:abs(i - current_page) &lt;= surrounding or i == 0 or i == len(page_links) - 1">
+				<span class="current-page" tal:condition="python:i == current_page">
+					${python:i+1}
+				</span>
+				<a tal:condition="python:i != current_page"
+				   href="${python:page_links[i]}">
+					${python:i+1}
+				</a>
+			</tal:block>
+			<tal:block
+				tal:condition="python:i == current_page - surrounding - 1 or i == current_page + surrounding + 1">
+				<span class="ellipsis">…</span>
+			</tal:block>
+		</tal:block>
+</div>
+</metal:block>
+
+</metal:block>

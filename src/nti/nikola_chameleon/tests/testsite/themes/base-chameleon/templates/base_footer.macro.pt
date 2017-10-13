@@ -1,0 +1,15 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+             xmlns:metal="http://xml.zope.org/namespaces/metal"
+             xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+
+<metal:block metal:define-macro="html_footer">
+    <footer id="footer" tal:condition="options/content_footer">
+        <p tal:content="structure options/content_footer">
+			The footer.
+		</p>
+            <!--! ${template_hooks['page_footer']()} -->
+    </footer>
+</metal:block>
+
+</metal:block>

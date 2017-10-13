@@ -1,0 +1,37 @@
+<div id="${options/carousel_id}"
+	 class="carousel slide"
+	 xmlns:metal="http://xml.zope.org/namespaces/metal">
+	<!--!
+		NOTE: This is just a content fragment, not an entire HTML
+		page, but it is called directly, not as a macro.
+	-->
+    <ol class="carousel-indicators">
+		<tal:block repeat="slide options/slides_content">
+			<li tal:condition="repeat/slide/start"
+				data-target="#${options/carousel_id}"
+				data-slide-to="${repeat/slide/index}"
+				class="active" />
+			<li tal:condition="not:repeat/slide/start"
+				data-target="#${options/carousel_id}"
+				data-slide-to="${repeat/slide/index}"
+				/>
+		</tal:block>
+    </ol>
+    <div class="carousel-inner">
+		<tal:block repeat="image options/slides_content">
+			<div tal:condition="repeat/image/start"
+                 class="item active">
+				<img src="${image}" alt=""
+					 class="d-block"
+							/>
+			</div>
+			<div tal:condition="not:repeat/image/start"
+                 class="item">
+				<img src="${image}" alt=""
+					 class="d-block" />
+			</div>
+		</tal:block>
+    </div>
+    <a class="left carousel-control" href="#${options/carousel_id}" data-slide="prev"><span class="icon-prev"></span><</a>
+    <a class="right carousel-control" href="#${options/carousel_id}" data-slide="next"><span class="icon-next"></span><</a>
+</div>

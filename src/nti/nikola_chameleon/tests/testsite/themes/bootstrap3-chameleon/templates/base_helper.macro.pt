@@ -1,0 +1,145 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+			 xmlns:metal="http://xml.zope.org/namespaces/metal"
+			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+<metal:block metal:define-macro="html_stylesheets_bundled_cdn">
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous" />
+</metal:block>
+
+
+<metal:block metal:define-macro="html_stylesheets_non_bundled_cdn">
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous" />
+</metal:block>
+<metal:block metal:define-macro="html_stylesheets_non_bundled_nocdn">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet"
+          type="text/css" />
+</metal:block>
+<metal:block metal:define-macro="html_stylesheets_non_bundled" >
+    <link href="/assets/css/colorbox.css" rel="stylesheet"
+          type="text/css" />
+</metal:block>
+
+<metal:block metal:define-macro="html_navigation_links">
+  <metal:block metal:use-macro="macro:html_navbar_navigation_links" />
+</metal:block>
+
+<metal:block metal:define-macro="html_right_navbar_navigation_links">
+  <metal:block metal:use-macro="macro:html_navbar_navigation_links" />
+</metal:block>
+
+<metal:block metal:define-macro="html_left_navbar_navigation_links">
+  <metal:block metal:use-macro="macro:html_navbar_navigation_links" />
+</metal:block>
+
+
+<metal:block metal:define-macro="html_navbar_navigation_links"
+             tal:define="lang options/lang;
+					     permalink options/permalink;
+					     rel_link nocall:options/rel_link">
+  <tal:block tal:repeat="(url,text) options/navigation_links/?lang">
+      <li tal:condition="python:isinstance(url, tuple)" class="dropdown">
+        <a href="#" class="dropdown-toggle"
+           data-toggle="dropdown" aria-haspopup="true"
+           aria-expanded="false">
+          ${text} <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <tal:block tal:repeat="(suburl, text) url">
+			<tal:block tal:switch="python:rel_link(permalink, suburl) == '#'">
+			  <li tal:case="True"
+				  class="active">
+				<a href="${permalink}">${text}
+			    <span class="sr-only"
+                      i18n:translate=""
+                      i18n:target="lang">(active)</span>
+                </a>
+              </li>
+			  <li tal:case="False">
+				<a
+					href="${suburl}">${text}</a>
+			  </li>
+			</tal:block>
+		  </tal:block>
+        </ul>
+      </li>
+      <tal:block tal:condition="python:not isinstance(url, tuple)">
+		<tal:block tal:switch="python:rel_link(permalink, url) == '#'">
+		  <li tal:case="True" class="active">
+			<a href="${permalink}">${text}<span class="sr-only"
+                      i18n:translate=""
+                      i18n:target="lang">(active)</span>
+            </a>
+		  </li>
+		  <li tal:case="False">
+			<a href="${url}">${text}</a>
+		  </li>
+		</tal:block>
+	  </tal:block>
+
+  </tal:block>
+</metal:block>
+
+<!--! class="navbar navbar-inverse navbar-static-top"-->
+<nav metal:define-macro="html_nav_menu"
+     class="navbar navbar-default navbar-custom navbar-fixed-top"
+     tal:define="abs_link nocall:options/abs_link;
+                 _link nocall:options/_link;
+                 logo_url options/logo_url;
+                 lang options/lang;
+                 blog_title options/blog_title">
+
+    <div class="container"><!-- This keeps the margins nice -->
+        <div class="navbar-header page-scroll">
+            <button type="button"
+                    class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#bs-navbar"
+                    aria-controls="bs-navbar" aria-expanded="false">
+              <span class="sr-only" i18n:translate="">Toggle navigation</span>
+              <i class="fa fa-bars">
+              </i>
+            </button>
+            <a class="navbar-brand" href="${python:abs_link(_link('root', None, lang))}">
+              <img src="${logo_url}" alt="${blog_title}" id="logo"
+                 tal:condition="logo_url" />
+
+              <span id="blog-title" tal:condition="options/show_blog_title">${blog_title}</span>
+            </a>
+        </div><!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+              <metal:block define-slot="left-navbar">
+                <metal:block
+                    use-macro="macro:html_left_navbar_navigation_links" />
+              </metal:block>
+                <!--! ${template_hooks['menu']()} -->
+            </ul>
+            <div class="searchform" role="search"
+                 tal:condition="options/search_form"
+                 tal:content="structure options/search_form" />
+
+            <ul class="nav navbar-nav navbar-right">
+                <metal:block define-slot="belowtitle">
+                <metal:block
+                    use-macro="macro:html_right_navbar_navigation_links" />
+
+                  <!--!
+                      %if len(translations) > 1:
+                      <li>${base.html_translations()}</li>
+                      %endif
+                  -->
+                </metal:block>
+                <metal:block define-slot="sourcelink"
+                             tal:condition="options/show_sourcelink" />
+                <!--! ${template_hooks['menu_alt']()} -->
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container -->
+</nav>
+
+</metal:block>

@@ -1,0 +1,82 @@
+<metal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+			 xmlns:metal="http://xml.zope.org/namespaces/metal"
+			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+<!--!
+  Note: at present, MathJax and KaTeX do not respect the USE_CDN
+  configuration option
+-->
+<metal:block metal:define-macro="math_scripts">
+    <tal:block tal:switch="options/use_katex">
+		<tal:block tal:case="True">
+        <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js"
+			integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1"
+			crossorigin="anonymous"></script>
+        <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js"
+			integrity="sha256-ExtbCSBuYA7kq1Pz362ibde9nnsHYPt6JxuxYeZbU+c=" crossorigin="anonymous"></script>
+        <script tal:condition="options/katex_auto_render">
+                renderMathInElement(document.body,
+                    {
+                        ${katex_auto_render}
+                    }
+                );
+        </script>
+        <script tal:condition="not:options/katex_auto_render">
+                renderMathInElement(document.body);
+        </script>
+		</tal:block>
+		<tal:block tal:case="False">
+			<!--! Note: given the size of MathJax; nikola will retrieve MathJax
+				from a CDN regardless of use_cdn configuration -->
+			<script
+				src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+				integrity="sha256-SDRP1VVYu+tgAGKhddBSl5+ezofHKZeI+OzxakbIe/Y="
+				crossorigin="anonymous"></script>
+			<script tal:replace="structure options/mathjax_config"
+					tal:condition="options/mathjax_config" />
+			<script type="text/x-mathjax-config"
+					tal:condition="not:options/mathjax_config">
+				MathJax.Hub.Config({tex2jax: {inlineMath: [['$latex ','$'], ['\\(','\\)']]}});
+			</script>
+		</tal:block>
+    </tal:block>
+</metal:block>
+
+<metal:block metal:define-macro="math_styles">
+    <link rel="stylesheet"
+		  href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css"
+		  integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0"
+		  crossorigin="anonymous"
+		  tal:condition="options/use_katex"/>
+</metal:block>
+
+<metal:block metal:define-macro="math_scripts_ifpost"
+             tal:define="post context">
+  <metal:block use-macro="macro:math_scripts"
+               tal:condition="post/is_mathjax" />
+</metal:block>
+
+<metal:block metal:define-macro="math_styles_ifpost"
+             tal:define="post context">
+  <metal:block use-macro="macro:math_styles"
+               tal:condition="post/is_mathjax" />
+</metal:block>
+
+<metal:block metal:define-macro="math_styles_ifposts"
+             tal:define="posts options/posts"
+             >
+	<metal:block metal:use-macro="macro:math_styles"
+				 tal:condition="python:any(post.is_mathjax for post in posts)"
+				 />
+</metal:block>
+
+<metal:block metal:define-macro="math_scripts_ifposts">
+	<metal:block metal:use-macro="macro:math_scripts"
+				 tal:define="posts options/posts"
+				 tal:condition="python:any(post.is_mathjax for post in posts)"
+				 />
+</metal:block>
+
+
+</metal:block>

@@ -1,0 +1,9 @@
+# -*- mode: conf; -*-
+[Theme]
+engine = nti.nikola_chameleon
+author = NextThought
+author_url =
+license = Apache2
+
+[Family]
+family = base

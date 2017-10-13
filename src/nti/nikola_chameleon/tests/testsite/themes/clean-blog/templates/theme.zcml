@@ -1,0 +1,26 @@
+<!-- -*- mode: nxml -*- -->
+<configure	xmlns="http://namespaces.zope.org/zope"
+            xmlns:i18n="http://namespaces.zope.org/i18n"
+            xmlns:zcml="http://namespaces.zope.org/zcml"
+            xmlns:z3c="http://namespaces.zope.org/z3c">
+
+  <include package="z3c.macro" />
+  <include package="z3c.macro" file="meta.zcml" />
+
+  <!-- Promote this to the head -->
+  <z3c:macro name="html_page_header"
+             macro="html_post_header_IPostPageKind"
+             for="*"
+             view="*"
+             template="post_header.macro.pt"
+             layer=".interfaces.IPostPageKind"
+             />
+  <z3c:macro name="html_page_header"
+             macro="html_page_header_IPagePageKind"
+             for="*"
+             view="*"
+             template="post_header.macro.pt"
+             layer=".interfaces.IPagePageKind"
+             />
+
+</configure>

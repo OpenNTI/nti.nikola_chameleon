@@ -1,0 +1,4 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           tal:define="feeds context/@@feeds">
+    ${structure:python:feeds.feed_translations_head(kind=options.get('kind'), feeds=False)}
+</tal:block>

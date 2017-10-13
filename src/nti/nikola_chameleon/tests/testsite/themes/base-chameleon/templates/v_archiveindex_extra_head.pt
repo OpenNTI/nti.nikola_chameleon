@@ -1,0 +1,1 @@
+${structure:python:path("context/@@feeds").feed_translations_head(options['archive_name'])}

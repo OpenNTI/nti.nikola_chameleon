@@ -1,0 +1,17 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:metal="http://xml.zope.org/namespaces/metal">
+    <style type="text/css">
+            .image-block {
+            display: inline-block;
+            }
+            .flowr_row {
+            width: 100%;
+            }
+    </style>
+    <metal:block tal:condition="options/translations">
+        <link tal:repeat="langname options/translations/keys"
+              rel="alternate" hreflang="${langname}"
+              href="${python:options['_link']('gallery', options['gallery_path'], langname)}" />
+    </metal:block>
+
+</tal:block>

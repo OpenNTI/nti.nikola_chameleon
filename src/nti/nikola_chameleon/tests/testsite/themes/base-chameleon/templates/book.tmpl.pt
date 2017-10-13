@@ -1,0 +1,25 @@
+<html metal:use-macro="context/@@base.tmpl/index/macros/base"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal">
+
+<!-- <%namespace name="helper" file="post_helper.tmpl"/> -->
+<!-- <%namespace name="pheader" file="post_header.tmpl"/> -->
+<!-- <%namespace name="comments" file="comments_helper.tmpl"/> -->
+<!-- <%inherit file="post.tmpl"/> -->
+
+
+
+<article class="storypage"
+         itemscope="itemscope" itemtype="http://schema.org/Article"
+         metal:fill-slot="content">
+<div class="frame">
+    <div class="scrolling-cont" id="scrolling-cont" name="scrolling-cont">
+        <div class="e-content entry-content chapter" itemprop="articleBody text">
+            <h1>${options/post/title}</h1>
+            ${structure:options/post/text}
+        </div>
+    </div>
+</div>
+</article>
+
+
+</html>
