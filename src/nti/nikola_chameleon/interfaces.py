@@ -234,6 +234,13 @@ class ICommentKindDisqus(ICommentKindAllowed):
     """
     interface.taggedValue('__comment_system__', 'disqus')
 
+class ICommentKindFacebook(ICommentKindAllowed):
+    """
+    Use Facebook comments.
+    """
+    interface.taggedValue('__comment_system__', 'facebook')
+
+
 COMMENTSYSTEMS = {}
 
 

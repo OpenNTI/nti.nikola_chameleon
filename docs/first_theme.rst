@@ -26,6 +26,8 @@ but helpfully) macro files.
           entire theme just based on the files in the templates
           directory and the Chameleon ``load:`` expression.
 
+.. _auto-register-templates:
+
 Templates
 =========
 
@@ -70,6 +72,8 @@ more flexible because it allows themes that extend yours to provide a
 new ``base.tmpl`` view. It is also useful to provide different macros
 depending on the ``context`` object (or whatever objects you traverse
 through). For more on that, see :doc:`using_zca` and :ref:`zcml`.
+
+.. _auto-register-macros:
 
 Macros
 ======

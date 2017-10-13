@@ -37,10 +37,14 @@ Request
 
 .. automodule:: nti.nikola_chameleon.request
 
-
 View
 ====
 .. automodule:: nti.nikola_chameleon.view
+
+Plugin
+======
+
+.. automodule:: nti.nikola_chameleon.plugin
 
 ZCML
 ====

@@ -78,6 +78,13 @@ class _SlideContext(_OptionsProxy):
     _properties = tuple(interfaces.ISlide.names())
 
 def getViewTemplate(name, view, request, context):
+    """
+    Find the ``IContentTemplate`` of the given *name*
+    for the given *view*, *request* and *context* (in that order).
+
+    If no such template is found, drop the *context* and try to find
+    a template just for the *view* and *request*.
+    """
     template = component.queryMultiAdapter(
         (view, request, context),
         IContentTemplate, name=name)
@@ -89,6 +96,10 @@ def getViewTemplate(name, view, request, context):
     return template
 
 class ChameleonTemplates(TemplateSystem):
+    """
+    An implementation of the TemplateSystem plugin using Chameleon
+    and zope.component.
+    """
 
     # pylint:disable=abstract-method
     # get_deps, get_string_deps, and get_template_path
