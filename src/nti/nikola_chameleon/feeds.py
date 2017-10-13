@@ -19,7 +19,7 @@ from .view import BaseView
 
 @interface.implementer(IDefaultBrowserLayer)
 class Feeds(BaseView):
-
+    "Helpers for feeds."
     # These are in feeds_translations.tmpl in mako.
     # They can and should be decomposed more so that the parameters
     # are based on configuration, context, view, layer.
@@ -94,6 +94,7 @@ class Feeds(BaseView):
     def feed_translations_head(self, classification=None, kind='index',
                                feeds=True, other=True, rss_override=True,
                                has_no_feeds=False):
+        "Produce the links in the head."
         result = u''
         if kind is None:
             kind = 'index'

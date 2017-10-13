@@ -59,14 +59,13 @@ understanding of the following:
 It may be helpful to understand object traversal, similar to what can
 be used in `the Pyramid web framework
 <https://docs.pylonsproject.org/projects/pyramid/en/latest/narr/traversal.html>`_.
+
+
 We use `zope.traversing
 <https://pypi.python.org/pypi/zope.traversing>`_ to implement
-traversal, and provide several "path adapters" to make traversal in
-path expressions more convenient.
-
-.. todo:: Write about the standard path adapters (meta,
-          formatted_date) and views (@@macros, @@post_text) we
-          provide, with examples.
+traversal, and provide several "path adapters" and views to make
+traversal in path expressions more convenient. For more information on
+those helpers, see :doc:`path_helpers`.
 
 Macros and Viewlets
 -------------------
@@ -91,4 +90,5 @@ These are made available in the ``options`` dictionary, one of `the
 standard names
 <https://docs.zope.org/zope2/zope2book/AppendixC.html#built-in-names>`_
 available to page templates. The ``context`` standard name is often a
-Nikola post object (depending on the specific template).
+Nikola post object (or :ref:`other Nikola object <context-object>`),
+and the context-specific template variables are available through it.

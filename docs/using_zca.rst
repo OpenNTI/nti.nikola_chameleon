@@ -27,6 +27,8 @@ relevance here. We'll begin by discussing each of the objects
 individually, and then in :ref:`lookup` we will explore how they come
 together.
 
+.. _context-object:
+
 Context
 -------
 

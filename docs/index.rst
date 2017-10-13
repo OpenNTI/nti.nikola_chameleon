@@ -17,6 +17,7 @@ package works, see :doc:`using_zca`.
    macros
    viewlets
    inheritance
+   path_helpers
    api
    changelog
 
