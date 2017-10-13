@@ -399,3 +399,34 @@ We would set up and fill that viewlet with this ZCML::
     </configure>
 
 For much more about viewlets, see :doc:`viewlets`.
+
+.. _finding-views:
+
+Views
+-----
+
+When you use the ``@@view_name`` syntax in a path expression, the
+previous path element becomes the *context* and an adapter from just
+context and request are looked up by that name.
+
+Example template::
+
+    <html metal:use-macro="context/@@base.tmpl/index/macros/base"
+          xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:metal="http://xml.zope.org/namespaces/metal">
+
+       ...
+    </html>
+
+The macro to use is looked for beginning with the expression
+``context/@@base.tmpl``. This takes the context object of this
+template and uses it to find the view (for the current request/layer)
+named ``@@base.tmpl``. All the ``.tmpl.pt`` files are registered as
+most generic, least specific named views :ref:`automatically
+<auto-register-template-views>`. You can add your own view registrations
+for specific combinations of context and request if desired, though
+this usually requires writing Python code.
+
+.. tip:: Any callable that accepts a context and request can be
+         registered as a view. This package provides several other
+         :doc:`helpful views <path_helpers>`.

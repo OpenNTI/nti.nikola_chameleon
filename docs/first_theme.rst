@@ -45,6 +45,8 @@ The most obvious way to create a theme, then, is to create a
 ``.tmpl.pt`` file for each standard template that Nikola uses and
 populate it with your design.
 
+.. _auto-register-template-views:
+
 Views for Sharing Macros
 ------------------------
 
@@ -71,7 +73,8 @@ expression type is available, the traversal based mechanism is much
 more flexible because it allows themes that extend yours to provide a
 new ``base.tmpl`` view. It is also useful to provide different macros
 depending on the ``context`` object (or whatever objects you traverse
-through). For more on that, see :doc:`using_zca` and :ref:`zcml`.
+through). For more on that, see :doc:`using_zca`, :doc:`inheritance`
+and :ref:`zcml`.
 
 .. _auto-register-macros:
 
@@ -141,13 +144,15 @@ type::
 However, as with templates, the use of the ``macro:`` expression type
 allows themes to extend us and replace that macro with their own
 version, and it allows us to produce macros that do different things
-depending on context. For more on that, see :doc:`using_zca` and :ref:`zcml`.
-
+depending on context. For more on that, see :doc:`using_zca`,
+:doc:`inheritance` and :ref:`zcml`.
 
 .. caution:: If you implement a macro of the same name in two
              different files, nti.nikola_chameleon will warn you, and
              the one in the last file that defines it will be what is
              registered.
+
+.. seealso:: :doc:`macros`
 
 .. _zcml:
 

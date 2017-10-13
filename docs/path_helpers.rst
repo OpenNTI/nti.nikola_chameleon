@@ -6,8 +6,9 @@
 
 nti.nikola_chameleon provides some helpers for use in path
 expressions. These are implemented either as *path adapters*, which
-use a ``namespace:name`` syntax, or as views, which use
-``@@view_name`` syntax.
+use a ``namespace:name`` syntax, or as :ref:`views <finding-views>`,
+which use ``@@view_name`` syntax. Both of these methods :doc:`leverage
+the component architecture <using_zca>`.
 
 This document will mention each path helper provided, and where
 appropriate, direct you to more information.
