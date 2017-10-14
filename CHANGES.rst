@@ -2,7 +2,7 @@
  Changes
 =========
 
-0.0.1a2 (unreleased)
+0.0.1a2 (2017-10-14)
 ====================
 
 - Map the Nikola ``messages`` function onto the native ``i18n``
