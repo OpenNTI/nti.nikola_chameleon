@@ -32,7 +32,9 @@ class IViewletManagerDirective(interface.Interface):
 
 def viewletManagerDirective(_context, id):
     id = str(id) # ensure native string
-    if id in dir(viewlets):
+    if id in dir(viewlets): # pragma: no cover
+        # The name functions as the identity, so this is
+        # idempotent.
         return
 
     # We must do our work right now so that it can
@@ -63,7 +65,7 @@ def _cleanUp():
 
 try:
     from zope.testing import cleanup
-except ImportError:
+except ImportError: # pragma: no cover
     pass
 else:
     cleanup.addCleanUp(_cleanUp)

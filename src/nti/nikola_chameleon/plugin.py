@@ -111,8 +111,8 @@ class ChameleonTemplates(TemplateSystem):
     def __init__(self):
         super(ChameleonTemplates, self).__init__()
         self._conf_context = xmlconfig.file('configure.zcml', nti.nikola_chameleon)
+        # A list of directories from least to most specific (or lowest to highest priority)
         self._template_paths = []
-        self._injected_template_paths = []
 
     def set_directories(self, directories, cache_folder):
         """Sets the list of folders where templates are located and cache."""
@@ -127,15 +127,11 @@ class ChameleonTemplates(TemplateSystem):
         self._template_paths.extend(reversed(directories))
 
         # We do set up the cache, though.
-
-        cache_dir = None
-        if  not 'CHAMELEON_CACHE' in os.environ or \
-            not os.path.isdir(os.path.expanduser(os.environ['CHAMELEON_CACHE'])):
-            cache_dir = os.path.abspath(os.path.join(cache_folder, 'chameleon_cache'))
-            makedirs(cache_dir)
-            os.environ['CHAMELEON_CACHE'] = cache_dir
-        else:
-            cache_dir = os.environ['CHAMELEON_CACHE']
+        # We ignore any existing environment variable because it really
+        # really needs to go where we tell it.
+        cache_dir = os.path.abspath(os.path.join(cache_folder, 'chameleon_cache'))
+        makedirs(cache_dir)
+        os.environ['CHAMELEON_CACHE'] = cache_dir
 
         conf_mod = dottedname.resolve('chameleon.config')
         if conf_mod.CACHE_DIRECTORY != cache_dir:
@@ -190,7 +186,7 @@ class ChameleonTemplates(TemplateSystem):
         so that the caller may do additional processing.
         """
         result = self.render_template_to_string(template_name, context)
-        if output_name is not None:
+        if output_name is not None: # pragma: no cover (Nikola doesn't seem to use this)
             makedirs(os.path.dirname(output_name))
             with open(output_name, 'wb') as f:
                 f.write(result.encode('utf-8'))
@@ -230,7 +226,7 @@ class ChameleonTemplates(TemplateSystem):
             context = _GalleryContext(options)
         elif template == 'slides.tmpl':
             context = _SlideContext(options)
-        else:
+        else: # pragma: no cover
             # We shouldn't get here.
             logger.warn("Unknown context type for template %r and options %r",
                         template, list(options))
@@ -301,19 +297,15 @@ class ChameleonTemplates(TemplateSystem):
             interface.alsoProvides(view, interfaces.ICommentKindNone)
         return view
 
-    def inject_directory(self, directory):
+    def inject_directory(self, directory): # pragma: no cover (Nikola seems not to call this)
         """Injects the directory with the lowest priority in the
         template search mechanism."""
 
         # This is called very early, that's the only reason that it gets
         # set low in the chains. It's called for each template plugin?
-        self._injected_template_paths.append(directory)
+        self._template_paths.insert(0, directory)
 
     def _provide_templates(self):
-        for d in self._injected_template_paths:
-            self._provide_templates_from_directory(d)
-        self._injected_template_paths = []
-
         for d in self._template_paths:
             self._provide_templates_from_directory(d)
         self._template_paths = []
@@ -336,7 +328,7 @@ class ChameleonTemplates(TemplateSystem):
             template = NikolaPageFileTemplate(macro_file)
             for name in template.macros.names:
                 factory = MacroFactory(macro_file, name, 'text/html')
-                if name in seen_macros:
+                if name in seen_macros: # pragma: no cover
                     logger.warning("Duplicate macro '%s' in %s and %s",
                                    name, seen_macros[name], macro_file)
                 seen_macros[name].add(macro_file)

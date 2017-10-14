@@ -10,11 +10,11 @@
 <nav metal:use-macro="macro:breadcrumbbar" />
 <ul tal:condition="context/folders|context/files">
     <li tal:repeat="name context/folders">
-		<metal:block metal:use-macro="folder-open"/>
+		<metal:block metal:use-macro="macro:folder_open"/>
         <a href="${name}" class="listing-folder">${name}</a>
 	</li>
     <li tal:repeat="name context/files">
-		<metal:block metal:use-macro="file"/>
+		<metal:block metal:use-macro="macro:file"/>
         <a href="${name}.html" class="listing-file">${name}</a>
 	</li>
 </ul>

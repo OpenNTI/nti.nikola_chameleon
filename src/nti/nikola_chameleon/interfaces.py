@@ -24,6 +24,8 @@ from zope import interface
 from zope.interface.common.sequence import IReadSequence
 from zope.viewlet.interfaces import IViewletManager
 
+# pylint:disable=inherit-non-class
+
 class IPost(interface.Interface):
     """
     A post.
@@ -56,7 +58,8 @@ class IGallery(interface.Interface):
     enable_comments = interface.Attribute("Whether comments are enabled.")
     folders = interface.Attribute("List of folders (path, title)")
     permalink = interface.Attribute("Permalink")
-    photo_array = interface.Attribute("List Photo array (contains dicts with image data: url, url_thumb, title, size{w, h}) ")
+    photo_array = interface.Attribute(
+        "List Photo array (contains dicts with image data: url, url_thumb, title, size{w, h}) ")
     post = interface.Attribute("Optionally the post for this gallery")
     thumbnail_size = interface.Attribute("THUMBNAIL_SIZE setting")
 
@@ -297,7 +300,7 @@ _cleanUp()
 
 try:
     from zope.testing import cleanup
-except ImportError:
+except ImportError: # pragma: no cover
     pass
 else:
     cleanup.addCleanUp(_cleanUp)

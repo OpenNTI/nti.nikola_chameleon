@@ -37,7 +37,7 @@ class Feeds(BaseView):
 
     def _head_feed_link(self, link_type, link_name, link_postfix, classification, kind, language):
         if len(self.options['translations']) > 1:
-            raise Exception("Translations not supported")
+            raise NotImplementedError("Translations not supported")
 
         context = dict(self.options)
         context.update(locals())
@@ -56,7 +56,7 @@ class Feeds(BaseView):
                 and not (options['rss_link'] and rss_override)
                 and kind != 'archive'):
             if len(options['translations']) > 1:
-                raise Exception("Translations not supported")
+                raise NotImplementedError("Translations not supported")
             for language in sorted(options['translations']):
                 if (classification or classification == '') and kind != 'index':
                     result += self._head_feed_link(
@@ -125,16 +125,23 @@ class HTMLFeedLinkViewlet(ViewletBase):
           classification_name="author"
           />
     """
-    available = True
+    available = False
     classification_name = None
+
+    def __init__(self, context, request, view, manager):
+        # There's a bug in the viewlet manager: it filters
+        # before doing the update(), so you can't set
+        # 'available' in update.
+        super(HTMLFeedLinkViewlet, self).__init__(context, request, view, manager)
+        self.update()
 
     def update(self):
         options = self.request.options
         generate_atom = options['generate_atom']
         generate_rss = options['generate_rss']
 
-        if not generate_atom and not generate_rss:
-            self.available = False
+        if generate_atom or generate_rss:
+            self.available = True
 
     _html_feed_link_tmpl = ViewPageTemplate("""
     <a tal:define="_link nocall:options/_link;
