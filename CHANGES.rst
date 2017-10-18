@@ -5,7 +5,10 @@
 0.0.1a3 (unreleased)
 ====================
 
-- Nothing changed yet.
+- Posts that have a true value for ``is_mathjax`` will now implement
+  the ``IMathJaxPost`` interface when used as the context.
+- Index pages that have any posts using MathJax will now have a
+  context object that implements ``IMathJaxPostList``.
 
 
 0.0.1a2 (2017-10-14)

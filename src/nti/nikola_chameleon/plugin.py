@@ -53,6 +53,12 @@ class _PostListContext(SpecificationDecoratorBase):
     A list of posts as the context.
     """
 
+@interface.implementer(interfaces.IMathJaxPostList)
+class _MathJaxPostListContext(_PostListContext):
+    """
+    MathJax in one of the posts.
+    """
+
 class _OptionsProxy(object):
 
     _properties = ()
@@ -218,8 +224,14 @@ class ChameleonTemplates(TemplateSystem):
                 interface.alsoProvides(context, interfaces.IPostPage)
                 # XXX: Need to look at the post's `type` and add that to the
                 # post https://getnikola.com/handbook.html#post-types
+                if context.is_mathjax:
+                    interface.alsoProvides(context, interfaces.IMathJaxPost)
         elif 'posts' in options:
             context = _PostListContext(options['posts'])
+            for post in context:
+                if post.is_mathjax:
+                    context = _MathJaxPostListContext(options['posts'])
+                    break
         elif 'code' in options and template == 'listing.tmpl':
             context = _ListingContext(options)
         elif template == 'gallery.tmpl':

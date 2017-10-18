@@ -33,9 +33,9 @@ Context
 -------
 
 The *context* is the object being rendered. It is most commonly a Nikola
-post (represented by :class:`IPost`),
+post (represented by :class:`IPost` or :class:`IMathJaxPost`),
 but it can also be a
-:class:`IPostList` on index pages, or
+:class:`IPostList` on index pages (or :class:`IMathJaxPostList`), or
 :class:`~IGallery`,
 :class:`~IListing`
 or :class:`~ISlide` on their

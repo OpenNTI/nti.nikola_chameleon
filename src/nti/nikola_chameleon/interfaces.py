@@ -26,6 +26,11 @@ from zope.viewlet.interfaces import IViewletManager
 
 # pylint:disable=inherit-non-class
 
+class INeedsMathJax(interface.Interface):
+    """
+    A context object that needs MathJax support to render.
+    """
+
 class IPost(interface.Interface):
     """
     A post.
@@ -33,9 +38,19 @@ class IPost(interface.Interface):
 
 interface.classImplements(Post, IPost)
 
+class IMathJaxPost(IPost, INeedsMathJax):
+    """
+    A post that uses MathJax.
+    """
+
 class IPostList(IReadSequence):
     """
     A list of posts.
+    """
+
+class IMathJaxPostList(IPostList, INeedsMathJax):
+    """
+    A list of posts at least one of which needs mathjax.
     """
 
 class IListing(interface.Interface):
