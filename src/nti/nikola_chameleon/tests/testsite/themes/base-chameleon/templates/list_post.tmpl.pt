@@ -9,7 +9,7 @@
         <tal:block replace="structure provider:content_header" />
     </header>
 
-    <tal:block metal:use-macro="macro:archive_navigation" />
+    <tal:block metal:use-macro="macro:html_body_content_archive_navigation" />
 
     <ul metal:use-macro="macro:html_posts_postlist">
         <li>A post</li>

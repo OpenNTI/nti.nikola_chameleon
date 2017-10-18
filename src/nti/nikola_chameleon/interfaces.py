@@ -185,7 +185,10 @@ class IPagePageKind(IPageKind):
     interface.taggedValue('__pagekinds__', (u'page_page',))
 
 class IStoryPageKind(IPagePageKind):
-    """A story page"""
+    """A story page.
+    You must still manually opt-in to using the story template
+    in the post metadata or site configuration.
+    """
 
     # 'story_page' and 'page_page' in pagekind
     interface.taggedValue('__pagekinds__', (u'page_page', u'story_page',))

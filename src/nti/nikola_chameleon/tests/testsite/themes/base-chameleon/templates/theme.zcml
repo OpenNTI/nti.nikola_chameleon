@@ -12,57 +12,8 @@
   <include package="zope.viewlet" file="meta.zcml" />
   <include package="nti.nikola_chameleon" file="meta.zcml" />
 
-  <z3c:macro name="open_graph_metadata"
-             for=".interfaces.IPost"
-             view="*"
-             template="post_helper.pt"
-             layer="*" />
-
-  <z3c:macro name="html_tags"
-             for=".interfaces.IPost"
-             view="*"
-             template="post_helper.pt"
-             layer="*" />
-
-  <z3c:macro name="html_pager"
-             for=".interfaces.IPost"
-             view="*"
-             template="post_helper.pt"
-             layer="*" />
-
-  <z3c:macro name="twitter_card_information"
-             for=".interfaces.IPost"
-             view="*"
-             template="post_helper.pt"
-             layer="*" />
-
-
-  <z3c:macro name="meta_translations"
-             for=".interfaces.IPost"
-             view="*"
-             template="post_helper.pt"
-             layer="*" />
-
-  <z3c:macro name="math_scripts_ifpost"
-             for=".interfaces.IPost"
-             view="*"
-             template="math_helper.macro.pt"
-             layer="*" />
-
-  <z3c:macro name="math_styles_ifpost"
-             for=".interfaces.IPost"
-             view="*"
-             template="math_helper.macro.pt"
-             layer="*" />
-
-  <z3c:macro name="post_html_translations"
-             for=".interfaces.IPost"
-             view="*"
-             template="post_header.macro.pt"
-             layer="*" />
-
-  <z3c:macro name="archive_navigation"
-             macro="archive_navigation_IArchivePageKind"
+  <z3c:macro name="html_body_content_archive_navigation"
+             macro="html_body_content_archive_navigation_IArchivePageKind"
              for="*"
              view="*"
              template="archive_navigation_helper.macro.pt"
@@ -134,6 +85,20 @@
              view=".interfaces.ICommentKindNone"
              layer="*"
              template="comments.pt" />
+
+  <!-- Math -->
+  <z3c:macro name="math_html_body_content_scripts"
+             macro="math_html_body_content_scripts_mathjax"
+             for=".interfaces.INeedsMathJax"
+             view="*"
+             template="math_helper.macro.pt"
+             layer="*" />
+  <z3c:macro name="math_html_extra_head_scripts"
+             macro="math_html_extra_head_scripts_mathjax"
+             for=".interfaces.INeedsMathJax"
+             view="*"
+             template="math_helper.macro.pt"
+             layer="*" />
 
 
   <!-- Viewlets and Viewlet managers -->
@@ -216,6 +181,22 @@
       layer=".interfaces.IPagePageKind"
       weight="0"
       />
+
+  <!-- And don't output the metadata section on PagePageKind -->
+  <z3c:macro name="post_html_body_content_header"
+             macro="page_html_body_content_header"
+             for="*"
+             view="*"
+             layer=".interfaces.IPagePageKind"
+             template="post_header.macro.pt" />
+
+  <z3c:macro name="post_html_body_content_postpromonav"
+             macro="page_html_body_content_postpromonav"
+             for="*"
+             view="*"
+             layer=".interfaces.IPagePageKind"
+             template="post_header.macro.pt" />
+
 
   <browser:viewlet
       name="default_extra_head"
@@ -392,14 +373,14 @@
   <!-- The main body template puts this after the content to include
        additional javascript -->
   <browser:viewletManager
-      name="body_footer_js"
+      name="base_html_body_footer"
       provides=".interfaces.IHtmlBodyFooterViewletManager"
       class="zope.viewlet.manager.WeightOrderedViewletManager"
       permission="zope.Public"
       />
 
   <browser:viewlet
-      name="generic_body_footer_js"
+      name="generic_base_html_body_footer"
       manager=".interfaces.IHtmlBodyFooterViewletManager"
       template="v_body_footer.pt"
       permission="zope.Public"
@@ -407,7 +388,7 @@
       />
 
   <browser:viewlet
-      name="extra_body_footer_js"
+      name="extra_base_html_body_footer"
       manager=".interfaces.IHtmlBodyFooterViewletManager"
       template="v_body_footer_extra_js.pt"
       permission="zope.Public"
@@ -416,7 +397,7 @@
 
   <!-- book adds body footers -->
   <browser:viewlet
-      name="default_body_footer_js"
+      name="default_base_html_body_footer"
       manager=".interfaces.IHtmlBodyFooterViewletManager"
       layer=".interfaces.IBookPageKind"
       permission="zope.Public"
@@ -426,7 +407,7 @@
 
   <!-- gallery adds body footers -->
   <browser:viewlet
-      name="default_body_footer_js"
+      name="default_base_html_body_footer"
       manager=".interfaces.IHtmlBodyFooterViewletManager"
       layer=".interfaces.IGalleryPageKind"
       permission="zope.Public"
@@ -450,5 +431,14 @@
       template="generic_post_list.pt"
       name="author.tmpl" />
 
+  <z3c:template
+      template="post.tmpl.pt"
+      name="page.tmpl"
+      layer=".interfaces.IPagePageKind" />
+
+  <z3c:template
+      template="post.tmpl.pt"
+      name="story.tmpl"
+      layer=".interfaces.IStoryPageKind" />
 
 </configure>

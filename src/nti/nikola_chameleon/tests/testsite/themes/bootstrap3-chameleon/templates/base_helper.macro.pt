@@ -2,7 +2,7 @@
 			 xmlns:metal="http://xml.zope.org/namespaces/metal"
 			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
-<metal:block metal:define-macro="html_stylesheets_bundled_cdn">
+<metal:block metal:define-macro="base_html_head_stylesheets_bundled_cdn">
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -10,22 +10,22 @@
 </metal:block>
 
 
-<metal:block metal:define-macro="html_stylesheets_non_bundled_cdn">
+<metal:block metal:define-macro="base_html_head_stylesheets_non_bundled_cdn">
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
           crossorigin="anonymous" />
 </metal:block>
-<metal:block metal:define-macro="html_stylesheets_non_bundled_nocdn">
+<metal:block metal:define-macro="base_html_head_stylesheets_non_bundled_nocdn">
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet"
           type="text/css" />
 </metal:block>
-<metal:block metal:define-macro="html_stylesheets_non_bundled" >
+<metal:block metal:define-macro="base_html_head_stylesheets_non_bundled" >
     <link href="/assets/css/colorbox.css" rel="stylesheet"
           type="text/css" />
 </metal:block>
 
-<metal:block metal:define-macro="html_navigation_links">
+<metal:block metal:define-macro="base_html_body_content_header_navigation_links">
   <metal:block metal:use-macro="macro:html_navbar_navigation_links" />
 </metal:block>
 
@@ -86,7 +86,7 @@
 </metal:block>
 
 <!--! class="navbar navbar-inverse navbar-static-top"-->
-<nav metal:define-macro="html_nav_menu"
+<nav metal:define-macro="base_html_body_nav_menu"
      class="navbar navbar-default navbar-custom navbar-fixed-top"
      tal:define="abs_link nocall:options/abs_link;
                  _link nocall:options/_link;

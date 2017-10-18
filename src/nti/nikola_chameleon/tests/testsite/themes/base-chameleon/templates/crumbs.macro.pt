@@ -3,7 +3,7 @@
              xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
 
-<metal:block metal:define-macro="breadcrumbbar">
+<metal:block metal:define-macro="html_body_content_breadcrumbbar">
 <nav class="breadcrumbs"
      tal:condition="options/crumbs"
      tal:define="crumbs options/crumbs">

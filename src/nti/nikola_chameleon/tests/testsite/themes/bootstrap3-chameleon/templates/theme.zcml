@@ -16,7 +16,7 @@
 
   <!-- Override extra js -->
   <browser:viewlet
-      name="extra_body_footer_js"
+      name="extra_base_html_body_footer"
       manager=".interfaces.IHtmlBodyFooterViewletManager"
       template="v_body_footer_extra_js.pt"
       permission="zope.Public"

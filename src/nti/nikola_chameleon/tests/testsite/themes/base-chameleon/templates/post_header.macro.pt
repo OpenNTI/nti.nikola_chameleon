@@ -3,7 +3,7 @@
              xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
 
-<metal:block metal:define-macro="html_title">
+<metal:block metal:define-macro="post_html_body_content_title">
   <h1 class="p-name entry-title" itemprop="headline name"
       tal:define="post context; title options/title"
       tal:condition="python:title and not post.meta('hidetitle')">
@@ -11,12 +11,12 @@
   </h1>
 </metal:block>
 
-<metal:block metal:define-macro="html_post_title_author_meta"
+<metal:block metal:define-macro="post_html_body_content_title_author_meta"
         tal:define="_link nocall:options/_link;
                     post context;
                     date_format options/date_format;
                     ">
-  <metal:block metal:use-macro="macro:html_title" />
+  <metal:block metal:use-macro="macro:post_html_body_content_title" />
   <div class="metadata meta">
     <p class="byline author vcard">
       <span class="byline-name fn" itemprop="author">
@@ -37,7 +37,7 @@
       </a>
     </p>
     <p class="commentline"
-       metal:use-macro="macro:comment-link">
+       metal:use-macro="macro:comment_link">
       Comments
     </p>
     <metal:block metal:use-macro="macro:html_sourcelink" />
@@ -48,9 +48,9 @@
   </div>
 </metal:block>
 
-<metal:block metal:define-macro="html_post_header">
+<metal:block metal:define-macro="post_html_body_content_header">
     <header class="intro-header">
-      <metal:block metal:use-macro="macro:html_post_title_author_meta" />
+      <metal:block metal:use-macro="macro:post_html_body_content_title_author_meta" />
       <metal:block metal:use-macro="macro:post_html_translations" />
     </header>
 </metal:block>
@@ -101,4 +101,127 @@
     </ul>
     <p tal:condition="not:options/posts" i18n:translate="">No posts found.</p>
 </metal:block>
+
+
+<metal:block metal:define-macro="post_html_head_open_graph_metadata"
+             tal:define="post context;
+                         use_open_graph options/use_open_graph;
+                         blog_title options/blog_title;
+                         abs_link nocall:options/abs_link;
+                         permalink options/permalink;">
+  <!--! Post is the context -->
+  <tal:block tal:condition="use_open_graph">
+    <meta property="og:site_name" content="${blog_title}" />
+    <meta property="og:title" content="${python:post.title()[:70]}" />
+    <meta property="og:url" content="${python:abs_link(permalink)}"/>
+    <meta property="og:description"
+          content="${python:post.description()[:200]}"
+          tal:condition="post/description" />
+    <meta property="og:description"
+          content="${python:post.text(strip_html=True)[:200]}"
+          tal:condition="not:post/description" />
+
+    <meta property="og:image"
+          content="${url_replacer(permalink, post.previewimage, lang,
+                   'absolute')}"
+          tal:condition="post/previewimage" />
+
+    <meta property="og:type" content="article" />
+    <meta property="article:published_time"
+          content="${python:post.formatted_date('webiso')}"
+          tal:condition="post/date/isoformat" />
+
+    <meta property="article:tag" content="${tag}"
+          tal:repeat="tag post/tags" />
+  </tal:block>
+</metal:block>
+
+
+<metal:block metal:define-macro="post_html_body_content_tags"
+             tal:define="post context;
+                         hidden_tags options/hidden_tags;
+                         _link nocall:options/_link"
+             >
+    <ul itemprop="keywords" class="tags" tal:condition="post/tags">
+      <tal:block tal:repeat="tag post/tags">
+        <li tal:condition="python:tag not in hidden_tags">
+          <a class="tag p-category" href="${python:_link('tag', tag)}" rel="tag">${tag}</a>
+        </li>
+      </tal:block>
+    </ul>
+</metal:block>
+
+<metal:block metal:define-macro="post_html_body_content_pager"
+             tal:define="post context">
+  <ul class="pager hidden-print"
+      tal:condition="python:post.prev_post or post.next_post">
+    <li class="previous" tal:condition="post/prev_post">
+      <a href="${post/prev_post/permalink}" rel="prev"
+         title="${post/prev_post/title}"
+         i18n:translate="">
+      Previous post
+      </a>
+    </li>
+    <li class="next" tal:condition="post/next_post">
+      <a href="${post/next_post/permalink}" rel="next"
+         title="${post/next_post/title}"
+         i18n:translate="">
+      Next post
+      </a>
+    </li>
+  </ul>
+</metal:block>
+
+<metal:block metal:define-macro="post_html_head_twitter_card_information"
+             tal:define="twitter_card options/twitter_card">
+  <tal:block tal:condition="twitter_card/use_twitter_cards|nothing">
+    <meta name="twitter:card"
+          content="${twitter_card/card|string:summary}" />
+      <meta name="twitter:site:id"
+          content="${python:twitter_card['site:id']}"
+          tal:condition="python:'site_id' in twitter_card" />
+
+    <meta name="twitter:site" content="twitter_card/site"
+          tal:condition="twitter_card/site|nothing" />
+
+    <meta name="twitter:creator:id"
+          content="${python:twitter_card['creator:id']}"
+          tal:condition="python:'creator:id' in twitter_card" />
+
+    <meta name="twitter:creator"
+          content="twitter_card/creator"
+          tal:condition="twitter_card/creator|nothing" />
+  </tal:block>
+</metal:block>
+
+<metal:block metal:define-macro="post_html_head_meta_translations"
+             tal:define="translations options/translations;
+                         post context;
+                         lang options/lang">
+  <tal:block tal:condition="python:len(translations) > 1">
+    <link tal:repeat="langname python:sorted(translations)"
+          tal:omit-tag="python:langname == lang or (not post.is_translation_available(langname) and post.skip_untranslated)"
+          rel="alternate"
+          hreflang="${langname}"
+          href="${python:post.permalink(langname)}" />
+  </tal:block>
+</metal:block>t
+
+<metal:block define-macro="page_html_body_content_header">
+    <header>
+      <metal:block metal:use-macro="macro:post_html_body_content_title" />
+      <metal:block metal:use-macro="macro:post_html_translations" />
+    </header>
+</metal:block>
+
+<aside metal:define-macro="post_html_body_content_postpromonav"
+       class="postpromonav">
+    <nav>
+        <metal:block use-macro="macro:post_html_body_content_tags" />
+        <metal:block use-macro="macro:post_html_body_content_pager" />
+    </nav>
+</aside>
+
+<metal:block metal:define-macro="page_html_body_content_postpromonav" />
+
 </metal:block>

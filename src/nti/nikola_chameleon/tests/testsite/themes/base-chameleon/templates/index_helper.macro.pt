@@ -3,7 +3,7 @@
 			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
 
-<nav metal:define-macro="html_pager"
+<nav metal:define-macro="html_body_content_pager"
      class="postindexpager">
      <ul class="pager"
          tal:condition="python:options['prevlink'] or options['nextlink']">

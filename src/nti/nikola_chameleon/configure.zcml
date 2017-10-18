@@ -63,4 +63,10 @@
           factory=".feeds.Feeds"
           name="feeds" />
 
+    <view for="*"
+          type="*"
+          factory=".view.PostCssKindView"
+          name="post_css"
+          />
+
 </configure>

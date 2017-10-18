@@ -3,8 +3,6 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
 >
-<!-- <%namespace name="archive_nav" file="archive_navigation_helper.tmpl" import="*"/> -->
-<!-- <%namespace name="feeds_translations" file="feeds_translations_helper.tmpl" import="*"/> -->
 
 <!--! This is used for archives of posts: both the "full" archives (in
      which case the context is IListPage exactly) and the monthly
@@ -16,7 +14,7 @@
     <header>
         <h1>${options/title}</h1>
     </header>
-    <tal:block metal:use-macro="macro:archive_navigation" />
+    <tal:block metal:use-macro="macro:html_body_content_archive_navigation" />
     <!--! ${feeds_translations.translation_link(kind)} -->
     <ul class="postlist" tal:condition="options/items">
 		<li tal:repeat="(name,href,count) options/items">

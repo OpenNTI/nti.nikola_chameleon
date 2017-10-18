@@ -117,6 +117,21 @@ Typical usage::
       ${structure:python:feeds.feed_translations_head(kind=kind , feeds=False)}
     </tal:block>
 
+CSS
+---
+
+The :class:`post_css <nti.nikola_chameleon.views.PostCssKindView>` has
+helpers to produce CSS, typically based on the kind of page being
+rendered.
+
+Typical usage::
+
+    <article metal:fill-slot="content"
+		 tal:define="post context"
+		 class="post-${context/meta:type} h-entry hentry
+				${context/@@post_css/pagekind_class}"
+		 itemscope="itemscope" itemtype="http://schema.org/Article">
+
 .. _macros-view:
 
 Macros

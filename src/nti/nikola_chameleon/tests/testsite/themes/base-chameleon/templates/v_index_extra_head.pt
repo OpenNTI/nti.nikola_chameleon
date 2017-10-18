@@ -10,5 +10,5 @@
         rel="prefetch"
         href="${python:options['posts'][0].permalink()}"
         type="text/html" />
-    <metal:block metal:use-macro="macro:math_styles_ifposts" />
+    <metal:block metal:use-macro="macro:math_html_extra_head_scripts" />
 </tal:block>

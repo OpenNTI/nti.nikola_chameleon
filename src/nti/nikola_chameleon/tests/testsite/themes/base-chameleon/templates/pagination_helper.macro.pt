@@ -2,7 +2,7 @@
 			 xmlns:metal="http://xml.zope.org/namespaces/metal"
 			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
-<metal:block metal:define-macro="page_navigation">
+<metal:block metal:define-macro="index_html_body_content_page_navigation">
 	<div class="page-navigation"
 		 tal:define="surrounding 5;
 					 curent_page options/current_page;

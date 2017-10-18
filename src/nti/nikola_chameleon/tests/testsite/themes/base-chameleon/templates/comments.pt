@@ -15,7 +15,7 @@ this is idempotent.) You can then traverse that to get the script:
         tal:repeat="post posts">
      <metal:block metal:use-macro="post/@@macros/comment_link" />
    </div>
-   <metal:block metal:use-macr="comment_link_post/@@macros/comment_link_script">
+   <metal:block metal:use-macro="comment_link_post/@@macros/comment_link_script">
 -->
 
 <!-- Dispatch macro name: comment-link -->

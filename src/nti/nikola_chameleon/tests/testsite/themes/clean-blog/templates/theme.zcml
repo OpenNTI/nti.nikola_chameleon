@@ -8,15 +8,15 @@
   <include package="z3c.macro" file="meta.zcml" />
 
   <!-- Promote this to the head -->
-  <z3c:macro name="html_page_header"
-             macro="html_post_header_IPostPageKind"
+  <z3c:macro name="base_html_body_page_header"
+             macro="post_html_body_content_header_IPostPageKind"
              for="*"
              view="*"
              template="post_header.macro.pt"
              layer=".interfaces.IPostPageKind"
              />
-  <z3c:macro name="html_page_header"
-             macro="html_page_header_IPagePageKind"
+  <z3c:macro name="base_html_body_page_header"
+             macro="base_html_body_page_header_IPagePageKind"
              for="*"
              view="*"
              template="post_header.macro.pt"

@@ -4,7 +4,7 @@
 
     <metal:block metal:fill-slot="content">
 
-	    <nav metal:use-macro="macro:breadcrumbbar" />
+	    <nav metal:use-macro="macro:html_body_content_breadcrumbbar" />
         <h1 tal:condition="options/title" tal:content="options/title">Title</h1>
 
         <p tal:condition="context/post" tal:content="structure:context/post/text">

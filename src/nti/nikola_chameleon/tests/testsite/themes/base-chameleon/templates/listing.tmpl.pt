@@ -7,28 +7,27 @@
 <!-- <%block name="content"> -->
 <metal:block metal:fill-slot="content">
 
-<nav metal:use-macro="macro:breadcrumbbar" />
-<ul tal:condition="context/folders|context/files">
-    <li tal:repeat="name context/folders">
-		<metal:block metal:use-macro="macro:folder_open"/>
-        <a href="${name}" class="listing-folder">${name}</a>
-	</li>
-    <li tal:repeat="name context/files">
-		<metal:block metal:use-macro="macro:file"/>
-        <a href="${name}.html" class="listing-file">${name}</a>
-	</li>
-</ul>
-<metal:block tal:condition="context/code">
-    <h1>
-		${options/title}
-		<small tal:condition="context/source_link">
-			<a href="${context/source_link}" i18n:translate="">
-				Source
-			</a>
-		</small>
-    </h1>
-    ${structure:context/code}
-
-</metal:block>
+    <nav metal:use-macro="macro:html_body_content_breadcrumbbar" />
+    <ul tal:condition="context/folders|context/files">
+        <li tal:repeat="name context/folders">
+		    <metal:block metal:use-macro="macro:folder_open"/>
+            <a href="${name}" class="listing-folder">${name}</a>
+	    </li>
+        <li tal:repeat="name context/files">
+		    <metal:block metal:use-macro="macro:file"/>
+            <a href="${name}.html" class="listing-file">${name}</a>
+	    </li>
+    </ul>
+    <metal:block tal:condition="context/code">
+        <h1>
+		    ${options/title}
+		    <small tal:condition="context/source_link">
+			    <a href="${context/source_link}" i18n:translate="">
+				    Source
+			    </a>
+		    </small>
+        </h1>
+        ${structure:context/code}
+    </metal:block>
 </metal:block>
 </html>

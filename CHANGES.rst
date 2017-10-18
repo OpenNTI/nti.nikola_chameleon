@@ -9,6 +9,8 @@
   the ``IMathJaxPost`` interface when used as the context.
 - Index pages that have any posts using MathJax will now have a
   context object that implements ``IMathJaxPostList``.
+- Add a view for getting CSS data. Currently it has
+  ``context/@@post_css/pagekind_class``.
 
 
 0.0.1a2 (2017-10-14)

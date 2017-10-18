@@ -1,1 +1,1 @@
-<metal:block use-macro="macro:archive_navigation" />
+<metal:block use-macro="macro:html_body_content_archive_navigation" />

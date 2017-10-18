@@ -17,6 +17,7 @@ from zope import interface
 from zope.publisher.interfaces.browser import IBrowserView
 from zope.viewlet.manager import ConditionalViewletManager as ZConditionalViewletManager
 
+from . import interfaces
 
 @interface.implementer(IBrowserView)
 class BaseView(object):
@@ -85,6 +86,25 @@ class PostTextView(BaseView):
         The string 'post-preview' if the content is a teaser.
         """
         return 'post-preview' if self.teaser else ''
+
+class PostCssKindView(BaseView):
+    """
+    For getting various strings useful in CSS.
+
+    .. versionadded:: 0.0.1a3
+    """
+
+    @property
+    def pagekind_class(self):
+        """
+        Returns a class name suitable for use in CSS.
+        """
+        layer = self.request
+        providing = list(interface.providedBy(layer).flattened())
+        for p in providing:
+            if p.isOrExtends(interfaces.IPageKind):
+                name = p.__name__[1:-4].lower()
+                return name
 
 class ConditionalViewletManager(ZConditionalViewletManager):
     """

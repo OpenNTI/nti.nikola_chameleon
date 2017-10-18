@@ -4,10 +4,10 @@
 
 
 <!-- default archive navigation does nothing -->
-<metal:block metal:define-macro="archive_navigation" />
+<metal:block metal:define-macro="html_body_content_archive_navigation" />
 
 <!-- This is registered for IArchivePageKind -->
-<metal:block metal:define-macro="archive_navigation_IArchivePageKind" >
+<metal:block metal:define-macro="html_body_content_archive_navigation_IArchivePageKind" >
   <nav tal:condition="options/has_archive_navigation"
        class="archivenav">
     <ul class="pager">

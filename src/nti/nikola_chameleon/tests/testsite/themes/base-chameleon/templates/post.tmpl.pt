@@ -7,23 +7,24 @@
 <article metal:fill-slot="content"
 		 tal:define="post context"
 		 class="post-${context/meta:type} h-entry hentry
-				postpage"
+				${context/@@post_css/pagekind_class}"
 		 itemscope="itemscope" itemtype="http://schema.org/Article">
-  <metal:block metal:use-macro="macro:html_post_header" />
+  <metal:block metal:use-macro="macro:post_html_body_content_header" />
   <div class="e-content entry-content" itemprop="articleBody text">
     ${structure:context/text}
   </div>
-  <aside class="postpromonav">
+  <aside metal:use-macro="macro:post_html_body_content_postpromonav"
+         class="postpromonav">
     <nav>
-      <metal:block use-macro="macro:html_tags" />
-      <metal:block use-macro="macro:html_pager" />
+        <div>Tags</div>
+        <div>Pager</div>
     </nav>
   </aside>
   <section class="comments hidden-print"
 		   metal:use-macro="macro:post_comment_form">
     Comment form would go here.
   </section>
-  <metal:block use-macro="macro:math_scripts_ifpost" />
+  <metal:block use-macro="macro:math_html_body_content_scripts" />
   <metal:block metal:use-macro="macro:comment_link_script" />
 </article>
 

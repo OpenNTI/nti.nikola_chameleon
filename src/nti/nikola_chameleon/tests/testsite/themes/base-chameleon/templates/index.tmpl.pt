@@ -19,7 +19,7 @@
     </header>
 
 
-    <metal:block use-macro="macro:page_navigation"
+    <metal:block use-macro="macro:index_html_body_content_page_navigation"
                  tal:condition="options/page_links|nothing" />
     <div class="postindex"
          tal:define="_link nocall:options/_link;
@@ -68,9 +68,8 @@
               tal:condition="need_comment_script" />
     </div>
 
-    <metal:block metal:use-macro="macro:html_pager" />
-    <metal:block metal:use-macro="macro:math_scripts_ifposts" />
-
+    <metal:block metal:use-macro="macro:html_body_content_pager" />
+    <metal:block metal:use-macro="macro:math_html_body_content_scripts" />
 
 </metal:block>
 

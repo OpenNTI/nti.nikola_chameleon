@@ -2,8 +2,6 @@
 			 xmlns:metal="http://xml.zope.org/namespaces/metal"
 			 xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
-<!--! <%namespace name="feeds_translations" file="feeds_translations_helper.tmpl" import="*"/> -->
-
 <!--!
 Note that we're hardcoding to use_open_graph with twitter cards.
 Not also that we're dropping rtl support.
@@ -11,7 +9,7 @@ Also dropping translation support.
 -->
 
 <head
-    metal:define-macro="html_headstart"
+    metal:define-macro="base_html_head"
     tal:define="use_base_tag options/use_base_tag|nothing;
                 description options/description|nothing;
                 abs_link nocall:options/abs_link;
@@ -32,7 +30,7 @@ Also dropping translation support.
     <title tal:condition="python:title == blog_title or not title">${blog_title}</title>
     <title tal:condition="python:title and title != blog_title">${title} | ${blog_title}</title>
 
-    <link metal:use-macro="macro:html_stylesheets" />
+    <link metal:use-macro="macro:base_html_head_stylesheets" />
 
     <meta name="theme-color" content="${options/theme_color}" />
     <meta name="generator" content="Nikola (getnikola.com)"
@@ -78,7 +76,8 @@ Also dropping translation support.
 
 </head>
 
-<metal:block metal:define-macro="html_stylesheets_bundled_cdn">
+<!--! Stylesheets -->
+<metal:block metal:define-macro="base_html_head_stylesheets_bundled_cdn">
   <link
       href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.2/baguetteBox.min.css"
       rel="stylesheet"
@@ -86,17 +85,19 @@ Also dropping translation support.
       />
 </metal:block>
 
-<metal:block metal:define-macro="html_stylesheets_non_bundled_cdn" />
-<metal:block metal:define-macro="html_stylesheets_non_bundled_nocdn" />
-<metal:block metal:define-macro="html_stylesheets_non_bundled" >
+<metal:block metal:define-macro="base_html_head_stylesheets_non_bundled_cdn" />
+<metal:block metal:define-macro="base_html_head_stylesheets_non_bundled_nocdn" />
+
+<metal:block metal:define-macro="base_html_head_stylesheets_non_bundled" >
   <link href="/assets/css/baguetteBox.min.css" rel="stylesheet"
         type="text/css" />
 </metal:block>
-<metal:block metal:define-macro="html_stylesheets_extensions" />
 
-<metal:block metal:define-macro="html_stylesheets">
+<metal:block metal:define-macro="base_html_head_stylesheets_extensions" />
+
+<metal:block metal:define-macro="base_html_head_stylesheets">
     <tal:block tal:condition="options/use_bundles">
-      <link metal:use-macro="macro:html_stylesheets_bundled_cdn"
+      <link metal:use-macro="macro:base_html_head_stylesheets_bundled_cdn"
             tal:condition="options/use_cdn" />
       <link href="/assets/css/all.css" rel="stylesheet"
             type="text/css"
@@ -106,11 +107,11 @@ Also dropping translation support.
             tal:condition="not:options/use_cdn"/>
     </tal:block>
     <tal:block tal:condition="not:options/use_bundles">
-      <link metal:use-macro="macro:html_stylesheets_non_bundled_cdn"
+      <link metal:use-macro="macro:base_html_head_stylesheets_non_bundled_cdn"
             tal:condition="options/use_cdn" />
-      <link metal:use-macro="macro:html_stylesheets_non_bundled_nocdn"
+      <link metal:use-macro="macro:base_html_head_stylesheets_non_bundled_nocdn"
             tal:condition="not:options/use_cdn" />
-      <link metal:use-macro="macro:html_stylesheets_non_bundled"
+      <link metal:use-macro="macro:base_html_head_stylesheets_non_bundled"
             />
 
         <link href="/assets/css/rst_base.css" rel="stylesheet"
@@ -133,9 +134,11 @@ Also dropping translation support.
     </tal:block>
 
     <link href="assets/another.css"
-          metal:use-macro="macro:html_stylesheets_extensions" />
+          metal:use-macro="macro:base_html_head_stylesheets_extensions" />
 
 </metal:block>
+
+<!--! End stylesheets -->
 
 <metal:block metal:define-macro="html_translations">
     <ul class="translations"
@@ -152,6 +155,112 @@ Also dropping translation support.
     </ul>
 </metal:block>
 
+<!--! Content header and footer -->
+
+<metal:block metal:define-macro="base_html_body_content_footer">
+    <footer id="footer" tal:condition="options/content_footer">
+        <p tal:content="structure options/content_footer">
+			The footer.
+		</p>
+            <!--! ${template_hooks['page_footer']()} -->
+    </footer>
+</metal:block>
+
+
+<metal:block metal:define-macro="base_html_body_content_header">
+    <header id="header">
+        <metal:block metal:use-macro="macro:base_html_body_content_header_site_title" />
+		<metal:block metal:use-macro="macro:base_html_body_content_header_translation" />
+		<metal:block metal:use-macro="macro:base_html_body_content_header_navigation_links" />
+
+        <div class="searchform" role="search"
+			 tal:condition="options/search_form"
+			 tal:content="structure options/search_form">
+
+        </div>
+    </header>
+    <!--! ${template_hooks['page_header']()} -->
+</metal:block>
+
+<!--! End Content header and footer -->
+
+<metal:block metal:define-macro="base_html_body_page_header" />
+
+<metal:block metal:define-macro="base_html_body_content_header_site_title"
+			 tal:define="abs_link nocall:options/abs_link;
+						 _link nocall:options/_link;
+						 lang options/lang">
+    <h1 id="brand">
+		<a href="${python:abs_link(_link('root', None, lang))}"
+		   title="${options/blog_title}" rel="home">
+			<img tal:condition="options/logo_url"
+				 src="${options/logo_url}" alt="${options/blog_title}"
+				 id="logo" />
+
+			<span id="blog-title"
+				  tal:condition="options/show_blog_title"
+				  tal:content="options/blog_title">
+				Blog Title
+			</span>
+
+		</a>
+	</h1>
+</metal:block>
+
+<metal:block metal:define-macro="base_html_body_content_header_navigation_links">
+    <nav id="menu">
+    <ul tal:define=" lang options/lang;
+					permalink options/permalink;
+					rel_link nocall:options/rel_link">
+		<tal:block tal:repeat="(url,text) python:options['navigation_links'][lang]">
+			<li tal:condition="python:isinstance(url, tuple)">
+				${text}
+				<ul>
+					<tal:block tal:repeat="(suburl, text) url">
+						<tal:block tal:switch="python:rel_link(permalink, suburl[0]) == '#'">
+							<li tal:case="True" class="active">
+								<a href="${permalink}">${text}
+                                <span class="sr-only"
+                                      i18n:translate=""
+                                      i18n:target="lang">(active)</span>
+                                </a>
+							</li>
+							<li tal:case="False">
+								<a
+									href="${suburl}">${text}</a>
+							</li>
+						</tal:block>
+					</tal:block>
+				</ul>
+			</li>
+			<tal:block tal:condition="python:not isinstance(url, tuple)">
+				<tal:block tal:switch="python:rel_link(permalink, url) == '#'">
+					<li tal:case="True" class="active">
+						<a href="${permalink}">${text}
+                        <span class="sr-only"
+                              i18n:translate=""
+                              i18n:target="lang">(active)</span>
+                        </a>
+					</li>
+					<li tal:case="False">
+						<a href="${url}">${text}</a>
+					</li>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+    <!--! ${template_hooks['menu']()} -->
+    <!--! ${template_hooks['menu_alt']()} -->
+    </ul>
+    </nav>
+</metal:block>
+
+<metal:block metal:define-macro="base_html_body_content_header_translation">
+    <div id="toptranslations"
+		 tal:condition="python:len(options['translations']) > 1">
+        <h2 i18n:translate="">Languages:</h2>
+		<metal:block metal:use-macro="macro:html_translations" />
+    </div>
+</metal:block>
 
 
 <!--!

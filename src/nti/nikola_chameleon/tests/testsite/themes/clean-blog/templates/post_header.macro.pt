@@ -3,7 +3,7 @@
              xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
 
-<metal:block metal:define-macro="html_post_title_author_meta"
+<metal:block metal:define-macro="post_html_body_content_title_author_meta"
         tal:define="_link nocall:options/_link;
                     post context;
                     date_format options/date_format;
@@ -14,8 +14,9 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="post-heading">
-          <h1 class="p-name entry-title" itemprop="headline name" >
-            ${post/title}
+          <h1 metal:use-macro="macro:post_html_body_content_title"
+              class="p-name entry-title" itemprop="headline name" >
+            A title
           </h1>
           <span class="meta">Posted by
           <span class="byline author vcard byline-name fn" itemprop="author">
@@ -27,10 +28,10 @@
           on <span class="dateline">
           <a href="${post/permalink}" rel="bookmark">
             <time class="published dt-published"
-                  datetime="${python:post.formatted_date('webiso')}"
+                  datetime="${post/formatted_date:webiso}"
                   itemprop="datePublished"
-                  title="${python:post.formatted_date(date_format)}">
-              ${python:context.formatted_date(date_format)}
+                  title="${post/formatted_date:?date_format}">
+              ${post/formatted_date:?date_format}
             </time>
           </a>.
         </span>
@@ -46,18 +47,18 @@
   </div>
 </metal:block>
 
-<metal:block metal:define-macro="html_post_header_IPostPageKind">
+<metal:block metal:define-macro="post_html_body_content_header_IPostPageKind">
     <header class="intro-header" style="background-image: url('/assets/img/post-bg.jpg')"
             tal:attributes="style python:context.data.get('header_style') or default"
             >
-      <metal:block metal:use-macro="macro:html_post_title_author_meta" />
+      <metal:block metal:use-macro="macro:post_html_body_content_title_author_meta" />
       <metal:block metal:use-macro="macro:post_html_translations" />
     </header>
 </metal:block>
 
-<metal:block metal:define-macro="html_post_header" />
+<metal:block metal:define-macro="post_html_body_content_header" />
 
-<metal:block metal:define-macro="html_page_header_IPagePageKind">
+<metal:block metal:define-macro="base_html_body_page_header_IPagePageKind">
     <header class="intro-header" style="background-image: url('/assets/img/page-bg.jpg')"
             tal:attributes="style python:context.data.get('header_style') or default"
             >
