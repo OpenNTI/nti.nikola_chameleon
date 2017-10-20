@@ -19,6 +19,8 @@
         tal:define="hidden_authors options/hidden_authors">
         <li tal:repeat="(name,link) options/items"
             tal:omit-tag="python:name in hidden_authors">
+            <!-- I think the omit-tag is probably wrong, we want the
+                 whole thing gone, not just the surrounding tag. -->
             <a class="reference listtitle"
                href="${link}">${name}</a>
         </li>
