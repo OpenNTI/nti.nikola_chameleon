@@ -1,0 +1,20 @@
+<metal:block xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+             xmlns:tal="http://xml.zope.org/namespaces/tal"
+             xmlns:metal="http://xml.zope.org/namespaces/metal"
+             tal:define="post_list_id options/post_list_id">
+    <!-- Begin post-list ${post_list_id} -->
+    <div id="${post_list_id}" class="post-list"
+         tal:condition="options/posts">
+        <ul class="post-list"
+            tal:define="date_format options/date_format;
+                        lang options/lang">
+            <li class="post-list-item"
+                tal:repeat="post options/posts">
+                ${post/formatted_date:?date_format}
+                &nbsp;
+                <a href="${python:post.permalink(lang)}">${python:post.title(lang)}</a>
+            </li>
+        </ul>
+    </div>
+    <!-- End post-list ${post_list_id} -->
+</metal:block>

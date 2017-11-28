@@ -47,9 +47,11 @@ class RenderedLayer(CleanUp, LayerBase):
             old_debug = nikola.DEBUG
             nikola.DEBUG = True
             try:
-                x = main(['build', '--quiet', '--strict', '--no-continue', '-v2'])
+                x = main(['build',
+                          '--quiet', # TODO: Conditional on env variable
+                          '--strict', '--no-continue', '-v2'])
                 if x:
-                    raise AssertionError("Build error")
+                    raise AssertionError("Build error", x)
             finally:
                 nikola.DEBUG = old_debug
         self._rendered = True
@@ -82,6 +84,7 @@ class RenderedLayer(CleanUp, LayerBase):
         self._render_if_needed()
         fname = os.path.join(self.testsite, 'output', *path)
         if not os.path.isfile(fname):
+            import pdb; pdb.set_trace()
             self.test.fail("No path %s" % (fname,)) # pragma: no cover
         return fname
 
@@ -110,3 +113,7 @@ class TestRender(unittest.TestCase):
 
         self.layer.assertInOutput('<div class="metadata"><p class="feedlink">',
                                   'authors', 'jason-madden.html')
+        self.layer.assertInOutput('<li class="post-list-item">',
+                                  "pages", 'post-list-test.html')
+        self.layer.assertInOutput('<a href="../posts/welcome-to-nikola.html">Welcome to Nikola</a>',
+                                  "pages", 'post-list-test.html')
