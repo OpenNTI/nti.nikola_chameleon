@@ -4,8 +4,7 @@
 
 .. highlight:: html
 
-`Macros
- <http://pagetemplates.readthedocs.io/en/latest/introduction.html#macros>`_
+`Macros <http://pagetemplates.readthedocs.io/en/latest/introduction.html#macros>`_
 are a simple way to create re-usable snippets of templates. They can
 be used as-is, or they can be lightly customized at the point of use
 by `filling slots <http://pagetemplates.readthedocs.io/en/latest/introduction.html#using-slots>`_.
