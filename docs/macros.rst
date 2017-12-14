@@ -5,14 +5,16 @@
 .. highlight:: html
 
 `Macros
-<https://chameleon.readthedocs.io/en/latest/reference.html#macros-metal>`_,
+ <http://pagetemplates.readthedocs.io/en/latest/introduction.html#macros>`_
 are a simple way to create re-usable snippets of templates. They can
 be used as-is, or they can be lightly customized at the point of use
-by `filling slots <https://chameleon.readthedocs.io/en/latest/reference.html#id40>`_.
+by `filling slots <http://pagetemplates.readthedocs.io/en/latest/introduction.html#using-slots>`_.
 
 This document will cover the ways in which macros can be used in
 Nikola themes created with this package; it will generally assume that you
-already understand the basics of creating and using macros on Chameleon.
+already understand the basics of creating and using macros on
+Chameleon. See the `macro reference documentation
+<http://pagetemplates.readthedocs.io/en/latest/metal.html>`_ for more details.
 
 One important thing to point out: the value of a ``use-macro``
 attribute is a true *expression*. It is evaluated to find the macro
@@ -24,7 +26,7 @@ Using Macros From the Same Template
 
 While not particularly common, it is possible to create and use macros
 all within the scope of a single template. One of `the standard names
-<https://docs.zope.org/zope2/zope2book/AppendixC.html#built-in-names>`_
+<http://pagetemplates.readthedocs.io/en/latest/tales.html#built-in-names>`_
 defined for path expressions is ``template`` referring to the
 currently executing template. A Chameleon template has a ``macros``
 dictionary that lists all the macros defined within by name.

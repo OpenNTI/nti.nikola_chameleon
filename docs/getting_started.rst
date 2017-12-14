@@ -4,7 +4,7 @@
 
 .. note:: For the purposes of this document, the implementation of
           `Zope Page Templates
-          <https://docs.zope.org/zope2/zope2book/AppendixC.html#define-define-variables>`_
+          <http://pagetemplates.readthedocs.io/en/latest/>`_
           provided by `Chameleon
           <https://chameleon.readthedocs.io/>`_
           working together with `z3c.pt
@@ -51,9 +51,9 @@ Prerequisites
 To create templates with this package, you'll need a basic
 understanding of the following:
 
-- the page templates `language <https://chameleon.readthedocs.io/en/latest/reference.html>`_
-- `path expressions
-  <https://docs.zope.org/zope2/zope2book/AppendixC.html#tales-path-expressions>`_
+- the page templates `language <http://pagetemplates.readthedocs.io/en/latest/>`_
+  as `implemented by Chameleon <https://chameleon.readthedocs.io/en/latest/reference.html>`_
+- `path expressions http://pagetemplates.readthedocs.io/en/latest/tales.html#tales-path-expressions>`_
 
 
 It may be helpful to understand object traversal, similar to what can
@@ -71,7 +71,7 @@ Macros and Viewlets
 -------------------
 
 Most templates will also make use of `macros
-<https://chameleon.readthedocs.io/en/latest/reference.html#macros-metal>`_,
+<http://pagetemplates.readthedocs.io/en/latest/introduction.html#macros>`_,
 and many will also use `viewlets
 <https://pypi.python.org/pypi/zope.viewlet>`_. We'll discuss how each
 of these can be used to develop flexible templates in :doc:`macros`
@@ -88,7 +88,7 @@ Your templates will have access to all of the `template variables
 Nikola defines <https://getnikola.com/template-variables.html>`_.
 These are made available in the ``options`` dictionary, one of `the
 standard names
-<https://docs.zope.org/zope2/zope2book/AppendixC.html#built-in-names>`_
+<http://pagetemplates.readthedocs.io/en/latest/tales.html#built-in-names>`_
 available to page templates. The ``context`` standard name is often a
 Nikola post object (or :ref:`other Nikola object <context-object>`),
 and the context-specific template variables are available through it.

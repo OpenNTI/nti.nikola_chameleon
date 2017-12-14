@@ -17,7 +17,7 @@ Key Objects
 ===========
 
 Three of the `the standard names
-<https://docs.zope.org/zope2/zope2book/AppendixC.html#built-in-names>`_
+<http://pagetemplates.readthedocs.io/en/latest/tales.html#built-in-names>`_
 available in templates play a particularly important part in the way
 templates, macros and viewlets are used.
 
