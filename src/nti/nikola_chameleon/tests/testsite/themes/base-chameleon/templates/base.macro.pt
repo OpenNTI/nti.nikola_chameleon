@@ -10,8 +10,7 @@ Also dropping translation support.
 
 <head
     metal:define-macro="base_html_head"
-    tal:define="use_base_tag options/use_base_tag|nothing;
-                description options/description|nothing;
+    tal:define="description options/description|nothing;
                 abs_link nocall:options/abs_link;
                 permalink options/permalink|nothing;
                 title options/title|nothing;
@@ -21,8 +20,7 @@ Also dropping translation support.
                 feeds context/@@feeds">
 
     <meta charset="utf-8" />
-    <base href="${python:abs_link(permalink)}"
-          tal:condition="use_base_tag" />
+    <base href="${python:abs_link(permalink)}" />
     <meta name="description" content="${description}"
           tal:condition="description" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

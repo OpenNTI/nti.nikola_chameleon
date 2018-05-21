@@ -53,7 +53,7 @@ understanding of the following:
 
 - the page templates `language <http://pagetemplates.readthedocs.io/en/latest/>`_
   as `implemented by Chameleon <https://chameleon.readthedocs.io/en/latest/reference.html>`_
-- `path expressions http://pagetemplates.readthedocs.io/en/latest/tales.html#tales-path-expressions>`_
+- `path expressions <http://pagetemplates.readthedocs.io/en/latest/tales.html#tales-path-expressions>`_
 
 
 It may be helpful to understand object traversal, similar to what can

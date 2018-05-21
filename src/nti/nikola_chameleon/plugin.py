@@ -224,12 +224,12 @@ class ChameleonTemplates(TemplateSystem):
                 interface.alsoProvides(context, interfaces.IPostPage)
                 # XXX: Need to look at the post's `type` and add that to the
                 # post https://getnikola.com/handbook.html#post-types
-                if context.is_mathjax:
+                if context.has_math:
                     interface.alsoProvides(context, interfaces.IMathJaxPost)
         elif 'posts' in options:
             context = _PostListContext(options['posts'])
             for post in context:
-                if post.is_mathjax:
+                if post.has_math:
                     context = _MathJaxPostListContext(options['posts'])
                     break
         elif 'code' in options and template == 'listing.tmpl':

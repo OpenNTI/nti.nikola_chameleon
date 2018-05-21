@@ -1,7 +1,7 @@
 <html metal:use-macro="context/@@base.tmpl/index/macros/base"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
 	  xmlns:metal="http://xml.zope.org/namespaces/metal">
+
 
 <!-- <%namespace name="ui" file="crumbs.tmpl" import="bar"/> -->
 <!-- <%block name="content"> -->

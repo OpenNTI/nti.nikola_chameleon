@@ -5,13 +5,13 @@
 0.0.1a3 (unreleased)
 ====================
 
-- Posts that have a true value for ``is_mathjax`` will now implement
+- Posts that have a true value for ``has_math`` will now implement
   the ``IMathJaxPost`` interface when used as the context.
 - Index pages that have any posts using MathJax will now have a
   context object that implements ``IMathJaxPostList``.
 - Add a view for getting CSS data. Currently it has
   ``context/@@post_css/pagekind_class``.
-
+- Update to Nikola 8; drop support for Python 2.7.
 
 0.0.1a2 (2017-10-14)
 ====================
