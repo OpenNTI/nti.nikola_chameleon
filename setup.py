@@ -34,8 +34,6 @@ setup(
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -60,7 +58,7 @@ setup(
         'zope.interface',
         'zope.dottedname',
         'zope.viewlet',
-        'nikola >= 7.8',
+        'nikola >= 8.0.0b2',
     ],
     extras_require={
         'test': TESTS_REQUIRE,
@@ -76,4 +74,5 @@ setup(
     #    ('nikola', ['nti.nikola_chameleon.plugin',]),
     #],
     entry_points=entry_points,
+    python_requires=">=3.5",
 )

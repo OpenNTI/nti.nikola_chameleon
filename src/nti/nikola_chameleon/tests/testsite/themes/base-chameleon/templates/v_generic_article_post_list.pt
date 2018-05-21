@@ -5,7 +5,7 @@
         <tal:block replace="structure provider:content_header" />
     </header>
 
-    <ul metal:use-macro="macro:html_posts_postlist">
+    <ul metal:use-macro="macro:post_html_body_content_postlist">
         <li>A post</li>
     </ul>
 </article>

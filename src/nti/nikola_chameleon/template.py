@@ -30,8 +30,8 @@ class NikolaPageFileTemplate(ViewPageTemplateFile):
 
     This does a few things:
 
-    1. Sets up the ``load:`` expression to work.
-    2. Restores the ``import:`` and ``structure:`` expression types.
+    1. Sets up the ``load`` expression to work.
+    2. Restores the ``import`` and ``structure`` expression types.
     3. Provides a ``translate`` function based on Nikola's
        ``messages`` dictionary that will enable Chameleon's default
        I18N support.
@@ -54,11 +54,12 @@ class NikolaPageFileTemplate(ViewPageTemplateFile):
         super(NikolaPageFileTemplate, self).__init__(template_file, path=path, **kwargs)
 
 
-    @property
-    def builtins(self):
+    def _builtins(self):
         d = super(NikolaPageFileTemplate, self).builtins
         d['__loader'] = self._loader
         return d
+
+    builtins = property(_builtins, doc='Restores the loader needed for load expressions')
 
     def _pt_get_context(self, instance, request, kwargs):     # pylint:disable=arguments-differ
         context = super(NikolaPageFileTemplate, self)._pt_get_context(

@@ -86,9 +86,9 @@
   </p>
 </metal:block>
 
-<metal:block metal:define-macro="html_posts_postlist">
-    <ul class="postlist" tal:condition="options/posts">
-      <li tal:repeat="post options/posts"
+<metal:block metal:define-macro="post_html_body_content_postlist">
+    <ul class="postlist" tal:condition="context">
+      <li tal:repeat="post context"
           tal:define="date_format options/date_format">
         <time class="listdate"
               tal:define="date post/formatted_date:?date_format"
@@ -99,41 +99,39 @@
            class="listtitle">${post/title}</a>
       </li>
     </ul>
-    <p tal:condition="not:options/posts" i18n:translate="">No posts found.</p>
+    <p tal:condition="not:context" i18n:translate="">No posts found.</p>
 </metal:block>
 
 
 <metal:block metal:define-macro="post_html_head_open_graph_metadata"
              tal:define="post context;
-                         use_open_graph options/use_open_graph;
                          blog_title options/blog_title;
                          abs_link nocall:options/abs_link;
                          permalink options/permalink;">
-  <!--! Post is the context -->
-  <tal:block tal:condition="use_open_graph">
-    <meta property="og:site_name" content="${blog_title}" />
-    <meta property="og:title" content="${python:post.title()[:70]}" />
-    <meta property="og:url" content="${python:abs_link(permalink)}"/>
-    <meta property="og:description"
-          content="${python:post.description()[:200]}"
-          tal:condition="post/description" />
-    <meta property="og:description"
-          content="${python:post.text(strip_html=True)[:200]}"
-          tal:condition="not:post/description" />
+  <!--! Post is the context; use_open_graph used to be optional, is
+      now always true. -->
+  <meta property="og:site_name" content="${blog_title}" />
+  <meta property="og:title" content="${python:post.title()[:70]}" />
+  <meta property="og:url" content="${python:abs_link(permalink)}"/>
+  <meta property="og:description"
+        content="${python:post.description()[:200]}"
+        tal:condition="post/description" />
+  <meta property="og:description"
+        content="${python:post.text(strip_html=True)[:200]}"
+        tal:condition="not:post/description" />
 
-    <meta property="og:image"
-          content="${url_replacer(permalink, post.previewimage, lang,
-                   'absolute')}"
-          tal:condition="post/previewimage" />
+  <meta property="og:image"
+        content="${url_replacer(permalink, post.previewimage, lang,
+                 'absolute')}"
+        tal:condition="post/previewimage" />
 
-    <meta property="og:type" content="article" />
-    <meta property="article:published_time"
-          content="${python:post.formatted_date('webiso')}"
-          tal:condition="post/date/isoformat" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time"
+        content="${python:post.formatted_date('webiso')}"
+        tal:condition="post/date/isoformat" />
 
-    <meta property="article:tag" content="${tag}"
-          tal:repeat="tag post/tags" />
-  </tal:block>
+  <meta property="article:tag" content="${tag}"
+        tal:repeat="tag post/tags" />
 </metal:block>
 
 

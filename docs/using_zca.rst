@@ -337,7 +337,7 @@ Viewlets
 --------
 
 As you might have guessed, viewlets are handled the same way. When you
-use the ``provider:`` `expression type
+use the ``provider:`` `tales expression
 <https://pypi.python.org/pypi/zope.contentprovider#the-tales-provider-expression>`_
 in a template, the resulting provider is found in the component
 registry using the current context, request and view.
