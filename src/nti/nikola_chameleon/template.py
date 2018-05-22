@@ -151,5 +151,6 @@ class MessagesTranslate(object):
                  target_language=None, default=None):
         try:
             return self._messages(msgid, target_language)
-        except KeyError:
+        except (KeyError, TypeError):
+            # TypeError if the object is unhashable, e.g., a dict
             return default or msgid

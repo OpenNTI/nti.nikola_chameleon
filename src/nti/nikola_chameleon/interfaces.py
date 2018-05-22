@@ -205,10 +205,18 @@ class IBookPageKind(IStoryPageKind):
 
 class IPostPage(IPost, IPageKind):
     """
-    A page being rendered by a post.
+    A page being rendered for a post.
     """
 
     interface.taggedValue('__pagekinds__', ())
+
+class IRootPage(interface.Interface):
+    """
+    The page that forms the root of the site, e.g., index.html.
+
+    The context takes this interface on when it specifies
+    the custom metadata field ``nti-extra-page-kind`` as ``"root"``.
+    """
 
 def _build(iface, result, tag='__pagekinds__', tx=lambda x: x):
     __traceback_info__ = iface, tag

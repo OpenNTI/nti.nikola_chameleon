@@ -34,7 +34,7 @@ class BaseView(object):
 
 class View(BaseView):
     """
-    The default view when be begin rendering a template.
+    The default view when we begin rendering a template.
 
     It may have "layers" applied to it to adjust the
     rendering conditions.
@@ -59,7 +59,7 @@ class PostTextView(BaseView):
     @property
     def teaser(self):
         """
-        The string 'teaser' if the content is a teaser, otherwise
+        The string 'teaser' if the content is a teaser in an index, otherwise
         None.
         """
         return 'teaser' if self.request.options['index_teasers'] else None
@@ -68,7 +68,7 @@ class PostTextView(BaseView):
     def content_kind(self):
         """
         Either 'summary' or 'content'. Intended to be used in
-        CSS class names.
+        CSS class names in indices.
         """
         return 'summary' if self.teaser else 'content'
 
@@ -76,7 +76,8 @@ class PostTextView(BaseView):
     @property
     def content(self):
         """
-        The full text or teaser text of the post.
+        The full text or teaser text of the post, as appropriate, in
+        an index.
         """
         return self.context.text(teaser_only=bool(self.teaser))
 
@@ -86,6 +87,14 @@ class PostTextView(BaseView):
         The string 'post-preview' if the content is a teaser.
         """
         return 'post-preview' if self.teaser else ''
+
+    @property
+    def embedded_content(self):
+        """
+        The teaser for a post, stripped of html. Works regardless of index
+        status.
+        """
+        return self.context.text(teaser_only=True, strip_html=True)
 
 class PostCssKindView(BaseView):
     """

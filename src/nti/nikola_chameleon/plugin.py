@@ -213,6 +213,10 @@ class ChameleonTemplates(TemplateSystem):
         context = options.get('post')
 
         if context is not None:
+            # Make the 'featured' list available to all pages, not just
+            # indexes. Added in nikola 8, but only for indexes.
+            if 'featured' not in options:
+                options['featured'] = [p for p in self.site.posts if p.post_status == 'featured']
             if template == 'gallery.tmpl':
                 # Some galleries can have posts
                 context = _GalleryContext(options)
@@ -226,6 +230,8 @@ class ChameleonTemplates(TemplateSystem):
                 # post https://getnikola.com/handbook.html#post-types
                 if context.has_math:
                     interface.alsoProvides(context, interfaces.IMathJaxPost)
+                if context.meta[context.default_lang].get('nti-extra-page-kind', '') == 'root':
+                    interface.alsoProvides(context, interfaces.IRootPage)
         elif 'posts' in options:
             context = _PostListContext(options['posts'])
             for post in context:

@@ -74,9 +74,10 @@ Post Text
 
 The ``text`` method on a post can take an optional parameter telling
 it to truncate to a teaser length. This is configurable by the user
-for index pages.
+for index pages, but repeatedly accessing the configuration is tedious.
 The :class:`post_text <nti.nikola_chameleon.view.PostTextView>` view
-provides helpers to automatically take this into account.
+provides helpers to automatically take this into account for indexes.
+It also helps when embedding posts into other pages.
 
 Typical example::
 
@@ -120,7 +121,7 @@ Typical usage::
 CSS
 ---
 
-The :class:`post_css <nti.nikola_chameleon.views.PostCssKindView>` has
+The :class:`post_css <nti.nikola_chameleon.view.PostCssKindView>` has
 helpers to produce CSS, typically based on the kind of page being
 rendered.
 

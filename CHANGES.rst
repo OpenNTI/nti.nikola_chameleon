@@ -12,6 +12,12 @@
 - Add a view for getting CSS data. Currently it has
   ``context/@@post_css/pagekind_class``.
 - Update to Nikola 8; drop support for Python 2.7.
+- Add ``interfaces.IRootPage`` which is added to pages for which the
+  metadata field ``nti-extra-page-kind`` is set to ``root``.
+- Make the ``featured`` list available to all pages, not just index
+  pages. Together with the IRootPage this can be used to promote blog
+  posts to the root index.html.
+- Add ``embedded_content`` to the ``@@post_text`` view.
 
 0.0.1a2 (2017-10-14)
 ====================
