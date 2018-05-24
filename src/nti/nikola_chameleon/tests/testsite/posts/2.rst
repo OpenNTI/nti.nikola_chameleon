@@ -25,3 +25,5 @@ Next steps:
 * :doc:`See a demo of a longer text <dr-nikolas-vendetta>`
 
 Send feedback to info@getnikola.com!
+
+:sc:`{{% nti %}}`

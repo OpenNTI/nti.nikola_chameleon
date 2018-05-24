@@ -84,7 +84,6 @@ class RenderedLayer(CleanUp, LayerBase):
         self._render_if_needed()
         fname = os.path.join(self.testsite, 'output', *path)
         if not os.path.isfile(fname):
-            import pdb; pdb.set_trace()
             self.test.fail("No path %s" % (fname,)) # pragma: no cover
         return fname
 
@@ -117,3 +116,7 @@ class TestRender(unittest.TestCase):
                                   "pages", 'post-list-test.html')
         self.layer.assertInOutput('<a href="../posts/welcome-to-nikola.html">Welcome to Nikola</a>',
                                   "pages", 'post-list-test.html')
+
+        self.layer.assertOutputExists('posts', 'test-page.html')
+        self.layer.assertInOutput("<div>This came from a shortcode</div>",
+                                  'posts', 'test-page.html')
