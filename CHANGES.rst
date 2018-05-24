@@ -18,6 +18,8 @@
   pages. Together with the IRootPage this can be used to promote blog
   posts to the root index.html.
 - Add ``embedded_content`` to the ``@@post_text`` view.
+- Initial support for template-based shortcodes. See
+  https://github.com/NextThought/nti.nikola_chameleon/issues/5
 
 0.0.1a2 (2017-10-14)
 ====================

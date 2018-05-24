@@ -119,6 +119,8 @@ class ChameleonTemplates(TemplateSystem):
         self._conf_context = xmlconfig.file('configure.zcml', nti.nikola_chameleon)
         # A list of directories from least to most specific (or lowest to highest priority)
         self._template_paths = []
+        # The (one) directory we check for shortcodes
+        self._shortcode_paths = ['shortcodes']
 
     def set_directories(self, directories, cache_folder):
         """Sets the list of folders where templates are located and cache."""
@@ -185,6 +187,9 @@ class ChameleonTemplates(TemplateSystem):
         return [template.filename]
 
 
+    get_deps = template_deps # For shortcodes
+
+
     def render_template(self, template_name, output_name, context):
         """Renders template to a file using context.
 
@@ -221,10 +226,14 @@ class ChameleonTemplates(TemplateSystem):
                 # Some galleries can have posts
                 context = _GalleryContext(options)
             else:
-                # We only render these things once in a given run,
-                # so we don't bother stripping the interfaces off of it
-                # or using a proxy.
-                assert not interfaces.IPageKind.providedBy(context)
+                # We typically only render these things once in a
+                # given run, so we don't bother stripping the
+                # interfaces off of it or using a proxy. The exception
+                # is if a post uses a shortcode; then that post is
+                # used as the context twice: once for rendering the
+                # shortcode, once for rendering the page. We still don't bother
+                # to strip or proxy, though, because the interfaces
+                # should be idempotent.
                 interface.alsoProvides(context, interfaces.IPostPage)
                 # XXX: Need to look at the post's `type` and add that to the
                 # post https://getnikola.com/handbook.html#post-types
@@ -269,6 +278,7 @@ class ChameleonTemplates(TemplateSystem):
         # When we render slides we don't get given messages.
         if 'messages' not in options:
             options['messages'] = self.site.MESSAGES
+
 
         return template(view, request=request, **options)
 
@@ -326,9 +336,12 @@ class ChameleonTemplates(TemplateSystem):
     def _provide_templates(self):
         for d in self._template_paths:
             self._provide_templates_from_directory(d)
+        for d in self._shortcode_paths:
+            self._provide_shortcode_templates(d)
         self._template_paths = []
+        self._shortcode_paths = []
 
-    def _provide_templates_from_directory(self, directory):
+    def __fixup_directory(self, directory):
         if not isinstance(directory, str) and str is bytes:
             # nikola likes to provide these as unicode on Python 2,
             # which is incorrect (unless maybe on windows?)
@@ -336,8 +349,10 @@ class ChameleonTemplates(TemplateSystem):
             # right now we just assume the locale decodes right.
             directory = directory.encode("utf-8")
 
-        directory = os.path.abspath(directory)
+        return os.path.abspath(directory)
 
+    def _provide_templates_from_directory(self, directory):
+        directory = self.__fixup_directory(directory)
         seen_macros = defaultdict(set)
         # Register macros for each macro found in each .macro.pt
         # file. This doesn't deal with naming conflicts.
@@ -381,3 +396,21 @@ class ChameleonTemplates(TemplateSystem):
         if os.path.exists(theme_zcml):
             # Let any explicit directions take precedence.
             xmlconfig.file(theme_zcml, context=self._conf_context)
+
+    def _provide_shortcode_templates(self, directory):
+        # Nikola passes shortcode templates as the *contents* of the file,
+        # not the file name.
+        directory = self.__fixup_directory(directory)
+        gsm = component.getGlobalSiteManager()
+        for template_file in sorted(glob.glob(os.path.join(directory, "*.tmpl"))):
+            with open(template_file, 'r') as f:
+                name = f.read()
+            factory = TemplateFactory(template_file, 'text/html')
+            # Register them as template adapters for us.
+            # required = (view, request, context)
+            gsm.registerAdapter(factory,
+                                provided=(IContentTemplate),
+                                required=(interface.Interface,
+                                          interface.Interface,
+                                          interface.Interface),
+                                name=name)
