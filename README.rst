@@ -3,7 +3,7 @@
 ======================
 
 .. image:: https://img.shields.io/pypi/v/nti.nikola_chameleon.svg
-        :target: https://pypi.python.org/pypi/nti.nikola_chameleon/
+        :target: https://pypi.org/project/nti.nikola_chameleon/
         :alt: Latest release
 
 .. image:: https://img.shields.io/pypi/pyversions/nti.nikola_chameleon.svg
@@ -21,10 +21,10 @@
         :alt: Documentation Status
 
 An extremely flexible template system for the `Nikola
-<https://pypi.python.org/pypi/Nikola>`_ static blog system using
-`Chameleon <https://pypi.python.org/pypi/Chameleon>`_, `z3c.pt
-<https://pypi.python.org/pypi/z3c.pt>`_ and `z3c.macro
-<https://pypi.python.org/pypi/z3c.macro>`_
+<https://pypi.org/project/Nikola>`_ static blog system using
+`Chameleon <https://pypi.org/project/Chameleon>`_, `z3c.pt
+<https://pypi.org/project/z3c.pt>`_ and `z3c.macro
+<https://pypi.org/project/z3c.macro>`_
 
 A basic template using this system is available in `base-chameleon
 <https://github.com/NextThought/nti.nikola_themes.base-chameleon>`_,
@@ -37,7 +37,7 @@ Documentation is hosted at https://ntinikola_chameleon.readthedocs.io/
 Installation
 ============
 
-Nikola uses a `custom mechanism <https://pypi.python.org/pypi/yapsy>`_
+Nikola uses a `custom mechanism <https://pypi.org/project/yapsy>`_
 to find plugins instead of using the usual ``pkg_resources`` system.
 That makes it *incredibly* difficult to install plugins; it's not enough
 just to ``pip install`` a package from PyPI. Instead, you must *also*
