@@ -33,6 +33,7 @@ recursive-include src *.rst
 recursive-include src *.theme
 recursive-include src *.tmpl
 recursive-include src *.txt
+recursive-include src *.md
 
 recursive-exclude src/nti/nikola_chameleon/tests/testsite/cache *
 exclude src/nti/nikola_chameleon/tests/testsite/plugins/__init__.py
