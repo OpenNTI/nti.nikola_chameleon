@@ -2,8 +2,8 @@
  Changes
 =========
 
-0.0.1a3 (unreleased)
-====================
+1.0.0 (2018-05-26)
+==================
 
 - Posts that have a true value for ``has_math`` will now implement
   the ``IMathJaxPost`` interface when used as the context.
